@@ -1,0 +1,1258 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook 3 — Análisis de residuos y visualizaciones finales &#8212; BTC Volatility MLP — Proyecto Integrador 11.15</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/3_residual_analysis';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notebook 4 — Entrenamiento del modelo final para producción" href="4_final_model.html" />
+    <link rel="prev" title="Notebook 2 — Entrenamiento del MLP" href="2_model_training.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">BTC Volatility MLP — Proyecto Integrador 11.15</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    BTC Volatility MLP — Proyecto Integrador 11.15
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_eda_volatility.html">1. Análisis exploratorio y volatilidad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_model_training.html">2. Entrenamiento del MLP multisalida</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">3. Análisis de residuos y test BDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_final_model.html">4. Modelo final para producción</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops/edit/main/notebooks/3_residual_analysis.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops/issues/new?title=Issue%20on%20page%20%2Fnotebooks/3_residual_analysis.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/3_residual_analysis.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook 3 — Análisis de residuos y visualizaciones finales</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-imports-rutas-y-creacion-de-figs">Setup — imports, rutas y creación de <code class="docutils literal notranslate"><span class="pre">figs/</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cargar-los-resultados-del-notebook-2">1. Cargar los resultados del notebook 2</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-bds-que-es-y-como-se-interpreta">2. Test BDS — qué es y cómo se interpreta</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aplicacion-del-bds-por-cada-lag-fold">3. Aplicación del BDS por cada <code class="docutils literal notranslate"><span class="pre">lag</span> <span class="pre">×</span> <span class="pre">fold</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tablas-finales-por-tamano-de-lag">4. Tablas finales por tamaño de lag</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-resumen-comparativa-final-4-lags">5. Tabla resumen comparativa final (4 lags)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curvas-temporales-train-val-test-con-predicciones-h-1">6. Curvas temporales <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">/</span> <span class="pre">val</span> <span class="pre">/</span> <span class="pre">test</span></code> con predicciones (h=1)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmse-por-fold">7. RMSE por fold</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmse-promedio-por-horizonte-7-puntos">8. RMSE promedio por horizonte (7 puntos)</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="notebook-3-analisis-de-residuos-y-visualizaciones-finales">
+<h1>Notebook 3 — Análisis de residuos y visualizaciones finales<a class="headerlink" href="#notebook-3-analisis-de-residuos-y-visualizaciones-finales" title="Link to this heading">#</a></h1>
+<section id="setup-imports-rutas-y-creacion-de-figs">
+<h2>Setup — imports, rutas y creación de <code class="docutils literal notranslate"><span class="pre">figs/</span></code><a class="headerlink" href="#setup-imports-rutas-y-creacion-de-figs" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">RESULTS_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../results&#39;</span><span class="p">)</span>
+<span class="n">FIGS_DIR</span>    <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;figs&#39;</span><span class="p">)</span>
+<span class="n">FIGS_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">,.6f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">110</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="cargar-los-resultados-del-notebook-2">
+<h2>1. Cargar los resultados del notebook 2<a class="headerlink" href="#cargar-los-resultados-del-notebook-2" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path_all_results</span> <span class="o">=</span> <span class="n">RESULTS_DIR</span> <span class="o">/</span> <span class="s1">&#39;all_results.joblib&#39;</span>
+<span class="n">path_config</span>      <span class="o">=</span> <span class="n">RESULTS_DIR</span> <span class="o">/</span> <span class="s1">&#39;config.joblib&#39;</span>
+
+<span class="k">assert</span> <span class="n">path_all_results</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="p">(</span>
+    <span class="sa">f</span><span class="s1">&#39;No existe </span><span class="si">{</span><span class="n">path_all_results</span><span class="si">}</span><span class="s1">. Ejecuta primero notebooks/2_model_training.ipynb.&#39;</span>
+<span class="p">)</span>
+
+<span class="n">all_results</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_all_results</span><span class="p">)</span>
+<span class="n">config</span>      <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_config</span><span class="p">)</span> <span class="k">if</span> <span class="n">path_config</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="p">{}</span>
+
+<span class="n">LAGS_LIST</span>        <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lags_list&#39;</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_results</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="n">N_STEPS_FORECAST</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;n_steps_forecast&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Lags disponibles     :&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_results</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Folds por lag        :&#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_results</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Horizonte de forecast:&#39;</span><span class="p">,</span> <span class="n">N_STEPS_FORECAST</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lags disponibles     : [7, 14, 21, 28]
+Folds por lag        : {7: 5, 14: 5, 21: 5, 28: 5}
+Horizonte de forecast: 7
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — carga de resultados</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">all_results</span></code> cargado con los 4 tamaños de lag y 5 folds por lag (total 20 combinaciones <code class="docutils literal notranslate"><span class="pre">(lag,</span> <span class="pre">fold)</span></code>). <code class="docutils literal notranslate"><span class="pre">N_STEPS_FORECAST</span> <span class="pre">=</span> <span class="pre">7</span></code> confirmado por el <code class="docutils literal notranslate"><span class="pre">config.joblib</span></code>. La estructura es consistente con lo que nb2 persistió: una entrada por fold que contiene <code class="docutils literal notranslate"><span class="pre">rmse/mae/mape/mse</span></code> (arrays de longitud 7), <code class="docutils literal notranslate"><span class="pre">y_*_{true,pred}</span></code> (matrices N×7), <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">scaler_x</span></code>, <code class="docutils literal notranslate"><span class="pre">scaler_y</span></code>, y la metadata de arquitectura ganadora.</p>
+</section>
+<section id="test-bds-que-es-y-como-se-interpreta">
+<h2>2. Test BDS — qué es y cómo se interpreta<a class="headerlink" href="#test-bds-que-es-y-como-se-interpreta" title="Link to this heading">#</a></h2>
+<p>El test <strong>BDS (Brock–Dechert–Scheinkman)</strong> contrasta si una serie es iid (independiente e idénticamente distribuida) frente a la alternativa de que contenga <strong>dependencia no lineal residual</strong>.</p>
+<ul class="simple">
+<li><p><strong>H₀:</strong> los residuos son iid → el modelo capturó la dinámica del proceso.</p></li>
+<li><p><strong>H₁:</strong> los residuos tienen estructura → queda información por explotar.</p></li>
+</ul>
+<p><strong>Cómo leer el p-valor:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condición</p></th>
+<th class="head"><p>Decisión sobre H₀</p></th>
+<th class="head"><p>Lectura del modelo</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">0.05</span></code></p></td>
+<td><p>No se rechaza H₀</p></td>
+<td><p>Residuos iid — el modelo se comporta bien</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">≤</span> <span class="pre">0.05</span></code></p></td>
+<td><p>Se rechaza H₀</p></td>
+<td><p>Queda estructura no lineal sin modelar</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Nota: se usa específicamente el <strong>horizonte 1</strong> (<code class="docutils literal notranslate"><span class="pre">resid_h1_test</span></code>) para el test, porque es la predicción más inmediata y con menor propagación de error multistep — es el diagnóstico más limpio sobre la dinámica temporal capturada.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Intento primero el import del PDF; fallback a statsmodels si no está disponible.</span>
+<span class="n">_bds_impl</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">_bds_source</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">arch.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">bds</span> <span class="k">as</span> <span class="n">_bds_arch</span>
+    <span class="n">_bds_impl</span> <span class="o">=</span> <span class="n">_bds_arch</span>
+    <span class="n">_bds_source</span> <span class="o">=</span> <span class="s1">&#39;arch.bootstrap&#39;</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.stattools</span><span class="w"> </span><span class="kn">import</span> <span class="n">bds</span> <span class="k">as</span> <span class="n">_bds_sm</span>
+        <span class="n">_bds_impl</span> <span class="o">=</span> <span class="n">_bds_sm</span>
+        <span class="n">_bds_source</span> <span class="o">=</span> <span class="s1">&#39;statsmodels.tsa.stattools&#39;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">_bds_impl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">_bds_source</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No se pudo importar el test BDS ni de arch ni de statsmodels:&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Implementación BDS usada: </span><span class="si">{</span><span class="n">_bds_source</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">bds_pvalue</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Devuelve el p-valor del test BDS sobre la serie de residuos.</span>
+
+<span class="sd">    Acepta la firma de ambas librerías (arch / statsmodels): se retornan</span>
+<span class="sd">    (stat, pvalue), que pueden ser escalares o arrays de longitud max_dim-1.</span>
+<span class="sd">    Con max_dim=2 (valor del enunciado) es un único valor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_bds_impl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;No hay implementación de BDS disponible. &#39;</span>
+                          <span class="s1">&#39;Añade &quot;statsmodels&quot; a requirements.txt o usa una &#39;</span>
+                          <span class="s1">&#39;versión de arch que incluya arch.bootstrap.bds.&#39;</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">_bds_impl</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">max_dim</span><span class="o">=</span><span class="n">max_dim</span><span class="p">)</span>
+    <span class="c1"># out suele ser (stat, pvalue); normalizamos a escalar float.</span>
+    <span class="n">stat</span><span class="p">,</span> <span class="n">pvalue</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Implementación BDS usada: statsmodels.tsa.stattools
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="aplicacion-del-bds-por-cada-lag-fold">
+<h2>3. Aplicación del BDS por cada <code class="docutils literal notranslate"><span class="pre">lag</span> <span class="pre">×</span> <span class="pre">fold</span></code><a class="headerlink" href="#aplicacion-del-bds-por-cada-lag-fold" title="Link to this heading">#</a></h2>
+<p>Recorremos <code class="docutils literal notranslate"><span class="pre">all_results</span></code>, calculamos los residuos del horizonte 1 en test (<code class="docutils literal notranslate"><span class="pre">y_test_true[:,</span> <span class="pre">0]</span> <span class="pre">-</span> <span class="pre">y_test_pred[:,</span> <span class="pre">0]</span></code>) y aplicamos BDS a cada uno. El p-valor se guarda en <code class="docutils literal notranslate"><span class="pre">m['bds_pvalue_h1']</span></code> para que la tabla de la siguiente sección lo use directamente.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n_lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">===== BDS test — lag = </span><span class="si">{</span><span class="n">n_lag</span><span class="si">}</span><span class="s1"> =====&#39;</span><span class="p">)</span>
+    <span class="n">pvals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fold</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Recalculamos los residuos por si no estuvieran guardados</span>
+        <span class="n">resid</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_test_true&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_test_pred&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">m</span><span class="p">[</span><span class="s1">&#39;resid_h1_test&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resid</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">bds_pvalue</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">m</span><span class="p">[</span><span class="s1">&#39;bds_pvalue_h1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="n">pvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;iid&#39;</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mf">0.05</span> <span class="k">else</span> <span class="s1">&#39;no-iid&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Fold </span><span class="si">{</span><span class="n">fold</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">: p-value = </span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">  [</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Promedio fold: p-value = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pvals</span><span class="p">)</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1"> ± </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">pvals</span><span class="p">)</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>===== BDS test — lag = 7 =====
+  Fold 1: p-value = 0.4059  [iid]
+  Fold 2: p-value = 0.7469  [iid]
+  Fold 3: p-value = 0.6294  [iid]
+  Fold 4: p-value = 0.4321  [iid]
+  Fold 5: p-value = 0.0422  [no-iid]
+  Promedio fold: p-value = 0.4513 ± 0.2404
+
+===== BDS test — lag = 14 =====
+  Fold 1: p-value = 0.2185  [iid]
+  Fold 2: p-value = 0.5208  [iid]
+  Fold 3: p-value = 0.2789  [iid]
+  Fold 4: p-value = 0.2286  [iid]
+  Fold 5: p-value = 0.3787  [iid]
+  Promedio fold: p-value = 0.3251 ± 0.1131
+
+===== BDS test — lag = 21 =====
+  Fold 1: p-value = 0.9638  [iid]
+  Fold 2: p-value = 0.4643  [iid]
+  Fold 3: p-value = 0.8344  [iid]
+  Fold 4: p-value = 0.6852  [iid]
+  Fold 5: p-value = 0.1451  [iid]
+  Promedio fold: p-value = 0.6185 ± 0.2892
+
+===== BDS test — lag = 28 =====
+  Fold 1: p-value = 0.1768  [iid]
+  Fold 2: p-value = 0.9451  [iid]
+  Fold 3: p-value = 0.8733  [iid]
+  Fold 4: p-value = 0.7508  [iid]
+  Fold 5: p-value = 0.9382  [iid]
+  Promedio fold: p-value = 0.7368 ± 0.2886
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — test BDS por fold (núcleo del análisis estadístico)</strong></p>
+<p>Lectura del p-valor: <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">0.05</span></code> = <strong>no se rechaza</strong> iid = el modelo capturó la dinámica no lineal. <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">≤</span> <span class="pre">0.05</span></code> = residuos con estructura = queda señal por explotar.</p>
+<p><strong>Resumen del resultado por lag</strong>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>lag</p></th>
+<th class="head"><p>folds iid</p></th>
+<th class="head"><p>avg p-value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>4/5</p></td>
+<td><p>0.451</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p><strong>5/5</strong></p></td>
+<td><p>0.325</p></td>
+</tr>
+<tr class="row-even"><td><p>21</p></td>
+<td><p>5/5</p></td>
+<td><p>0.619</p></td>
+</tr>
+<tr class="row-odd"><td><p>28</p></td>
+<td><p>5/5</p></td>
+<td><p>0.737</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Observación #1 — el único fold no-iid es lag=7 Fold 5 (p = 0.042)</strong>. NO es casualidad: este mismo fold tiene el peor RMSE del lag=7 (0.094 vs baseline 0.065-0.076 en los otros). Dos síntomas del mismo diagnóstico: el modelo no capturó la dinámica del segmento test de ese fold, deja residuos con estructura, y por eso el error de predicción es alto. El fold probablemente cae en un régimen nuevo (2024-2025, vol estructuralmente más baja) que el train no cubre.</p>
+<p><strong>Observación #2 — lag=14 tiene 100 % iid pero los p-values más bajos</strong> (0.22, 0.28, 0.23). Los residuos PASAN el test pero por poco, lo cual es <strong>consistente con que lag=14 es el que más señal extrae</strong> (RMSE tan bajo como lag 7 pero con residuos al borde de detectable). Lags 21 y 28 tienen p-values más altos no porque sean mejores, sino porque sus residuos son más grandes y más dispersos → más ruidosos → el BDS los confunde con iid.</p>
+<p><strong>Observación #3 — los 4 lags pasan el test en 19/20 folds</strong>. Lectura fuerte: <strong>el MLP multisalida captura satisfactoriamente la memoria no-lineal de la volatilidad de BTC</strong>.</p>
+</section>
+<section id="tablas-finales-por-tamano-de-lag">
+<h2>4. Tablas finales por tamaño de lag<a class="headerlink" href="#tablas-finales-por-tamano-de-lag" title="Link to this heading">#</a></h2>
+<p>Una tabla por <code class="docutils literal notranslate"><span class="pre">n_steps_input</span> <span class="pre">∈</span> <span class="pre">{7,</span> <span class="pre">14,</span> <span class="pre">21,</span> <span class="pre">28}</span></code>, con filas por fold y columnas:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MAPE</span></code> (promedio sobre los 7 horizontes)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MAE</span></code>  (promedio sobre los 7 horizontes)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RMSE</span></code> (promedio sobre los 7 horizontes)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MSE</span></code>  (promedio sobre los 7 horizontes)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BDS_pvalue_h1</span></code></p></li>
+</ul>
+<p>Fila final <code class="docutils literal notranslate"><span class="pre">Mean</span> <span class="pre">±</span> <span class="pre">Std</span></code> con el agregado entre folds. Se guardan los 4 CSV en <code class="docutils literal notranslate"><span class="pre">../results/</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">build_full_table</span><span class="p">(</span><span class="n">results_for_lag</span><span class="p">):</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">fold</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">results_for_lag</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">rows</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;Fold_</span><span class="si">{</span><span class="n">fold</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;MAPE&#39;</span><span class="p">:</span>           <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;mape&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+            <span class="s1">&#39;MAE&#39;</span><span class="p">:</span>            <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+            <span class="s1">&#39;RMSE&#39;</span><span class="p">:</span>           <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+            <span class="s1">&#39;MSE&#39;</span><span class="p">:</span>            <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;mse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+            <span class="s1">&#39;BDS_pvalue_h1&#39;</span><span class="p">:</span>  <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;bds_pvalue_h1&#39;</span><span class="p">]),</span>
+        <span class="p">}</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+    <span class="n">means</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">stds</span>  <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;Mean ± Std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mu</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1"> ± </span><span class="si">{</span><span class="n">sg</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">means</span><span class="p">,</span> <span class="n">stds</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="n">full_tables</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">n_lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+    <span class="n">tbl</span> <span class="o">=</span> <span class="n">build_full_table</span><span class="p">(</span><span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">])</span>
+    <span class="n">full_tables</span><span class="p">[</span><span class="n">n_lag</span><span class="p">]</span> <span class="o">=</span> <span class="n">tbl</span>
+    <span class="n">out_path</span> <span class="o">=</span> <span class="n">RESULTS_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;final_table_lag</span><span class="si">{</span><span class="n">n_lag</span><span class="si">}</span><span class="s1">.csv&#39;</span>
+    <span class="n">tbl</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">--- Tabla final — lag=</span><span class="si">{</span><span class="n">n_lag</span><span class="si">}</span><span class="s1"> (guardada en </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s1">) ---&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tbl</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--- Tabla final — lag=7 (guardada en ..\results\final_table_lag7.csv) ---
+                       MAPE              MAE             RMSE  \
+Fold_1            10.614133         0.054725         0.076232   
+Fold_2             9.090693         0.048082         0.070212   
+Fold_3             8.478275         0.046435         0.067984   
+Fold_4             7.640733         0.043086         0.064037   
+Fold_5             9.521160         0.054718         0.094231   
+Mean ± Std  9.0690 ± 1.1159  0.0494 ± 0.0052  0.0745 ± 0.0119   
+
+                        MSE    BDS_pvalue_h1  
+Fold_1             0.006218         0.405896  
+Fold_2             0.005342         0.746917  
+Fold_3             0.005033         0.629406  
+Fold_4             0.004479         0.432126  
+Fold_5             0.010796         0.042241  
+Mean ± Std  0.0064 ± 0.0026  0.4513 ± 0.2687  
+
+--- Tabla final — lag=14 (guardada en ..\results\final_table_lag14.csv) ---
+                       MAPE              MAE             RMSE  \
+Fold_1             9.661114         0.053866         0.074023   
+Fold_2             8.920385         0.050014         0.068995   
+Fold_3            10.130187         0.055656         0.076372   
+Fold_4             9.815131         0.056275         0.075389   
+Fold_5             9.163975         0.053705         0.077949   
+Mean ± Std  9.5382 ± 0.4909  0.0539 ± 0.0024  0.0745 ± 0.0034   
+
+                        MSE    BDS_pvalue_h1  
+Fold_1             0.005733         0.218542  
+Fold_2             0.005108         0.520772  
+Fold_3             0.006269         0.278939  
+Fold_4             0.006194         0.228553  
+Fold_5             0.006290         0.378679  
+Mean ± Std  0.0059 ± 0.0005  0.3251 ± 0.1265  
+
+--- Tabla final — lag=21 (guardada en ..\results\final_table_lag21.csv) ---
+                        MAPE              MAE             RMSE  \
+Fold_1              8.542395         0.044959         0.060286   
+Fold_2             10.266033         0.051649         0.073896   
+Fold_3             11.863193         0.070041         0.123515   
+Fold_4             11.743926         0.073151         0.121639   
+Fold_5             10.008921         0.055294         0.074007   
+Mean ± Std  10.4849 ± 1.3723  0.0590 ± 0.0121  0.0907 ± 0.0297   
+
+                        MSE    BDS_pvalue_h1  
+Fold_1             0.003746         0.963830  
+Fold_2             0.005712         0.464252  
+Fold_3             0.015816         0.834371  
+Fold_4             0.014885         0.685211  
+Fold_5             0.005823         0.145051  
+Mean ± Std  0.0092 ± 0.0057  0.6185 ± 0.3234  
+
+--- Tabla final — lag=28 (guardada en ..\results\final_table_lag28.csv) ---
+                        MAPE              MAE             RMSE  \
+Fold_1             11.998517         0.069837         0.089004   
+Fold_2             13.076136         0.085564         0.118464   
+Fold_3             15.008691         0.099564         0.139927   
+Fold_4             14.833885         0.107435         0.175736   
+Fold_5             14.050876         0.081802         0.109944   
+Mean ± Std  13.7936 ± 1.2611  0.0888 ± 0.0149  0.1266 ± 0.0330   
+
+                        MSE    BDS_pvalue_h1  
+Fold_1             0.008539         0.176788  
+Fold_2             0.015000         0.945073  
+Fold_3             0.020006         0.873329  
+Fold_4             0.031423         0.750771  
+Fold_5             0.012793         0.938193  
+Mean ± Std  0.0176 ± 0.0088  0.7368 ± 0.3226  
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — 4 tablas finales (una por lag)</strong></p>
+<p>Cada tabla combina MAPE/MAE/RMSE/MSE por fold con el p-valor BDS. Cruces clave:</p>
+<ul class="simple">
+<li><p><strong>Lag 7 Fold 5</strong>: RMSE 0.094 + BDS 0.042 — <strong>el único par (RMSE alto, BDS no-iid) del experimento</strong>. Confirmación dura de que ese fold es el punto débil del pipeline con lag=7.</p></li>
+<li><p><strong>Lag 14</strong>: folds con RMSE muy homogéneos (0.069-0.078, rango 0.009) y BDS todos iid. Es <strong>el lag más estable</strong> del experimento — si tuviera que desplegar en producción mañana, este es el candidato menos volátil.</p></li>
+<li><p><strong>Lag 21 Fold 1</strong>: RMSE 0.060 (mejor de todo el experimento) + BDS 0.96 (casi max). Residuos casi idealmente aleatorios. Pero lag 21 como promedio es peor por los folds 3-4 que colapsan.</p></li>
+<li><p><strong>Lag 28 Fold 4</strong>: RMSE 0.176 + BDS 0.75 — error enorme pero residuos iid. <strong>Lección importante</strong>: residuos iid ≠ modelo bueno. Solo significa que el error es aleatorio, no que sea pequeño.</p></li>
+</ul>
+<p>Las 4 CSVs (<code class="docutils literal notranslate"><span class="pre">final_table_lag{N}.csv</span></code>) son artefactos directos para la memoria del proyecto — cada una es una tabla publicable tal cual.</p>
+</section>
+<section id="tabla-resumen-comparativa-final-4-lags">
+<h2>5. Tabla resumen comparativa final (4 lags)<a class="headerlink" href="#tabla-resumen-comparativa-final-4-lags" title="Link to this heading">#</a></h2>
+<p>Una fila por tamaño de lag con:</p>
+<ul class="simple">
+<li><p>promedio (entre folds) de MAPE / MAE / RMSE / MSE,</p></li>
+<li><p>promedio y desvío del p-valor BDS,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pct_folds_iid</span></code> = porcentaje de folds con <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">0.05</span></code>.</p></li>
+</ul>
+<p>Guardamos la tabla en <code class="docutils literal notranslate"><span class="pre">../results/final_summary.csv</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">summary_rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">n_lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+    <span class="n">folds_dict</span> <span class="o">=</span> <span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">]</span>
+    <span class="n">mape_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;mape&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">folds_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+    <span class="n">mae_avg</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">folds_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+    <span class="n">rmse_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">folds_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+    <span class="n">mse_avg</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;mse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">folds_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+    <span class="n">bds_avg</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;bds_pvalue_h1&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">folds_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+    <span class="n">bds_std</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span> <span class="p">([</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;bds_pvalue_h1&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">folds_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+    <span class="n">pct_iid</span>  <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;bds_pvalue_h1&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.05</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">folds_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+    <span class="n">summary_rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s1">&#39;# lags&#39;</span><span class="p">:</span>          <span class="n">n_lag</span><span class="p">,</span>
+        <span class="s1">&#39;avg_MAPE_test&#39;</span><span class="p">:</span>   <span class="n">mape_avg</span><span class="p">,</span>
+        <span class="s1">&#39;avg_MAE_test&#39;</span><span class="p">:</span>    <span class="n">mae_avg</span><span class="p">,</span>
+        <span class="s1">&#39;avg_RMSE_test&#39;</span><span class="p">:</span>   <span class="n">rmse_avg</span><span class="p">,</span>
+        <span class="s1">&#39;avg_MSE_test&#39;</span><span class="p">:</span>    <span class="n">mse_avg</span><span class="p">,</span>
+        <span class="s1">&#39;avg_BDS_pval&#39;</span><span class="p">:</span>    <span class="n">bds_avg</span><span class="p">,</span>
+        <span class="s1">&#39;std_BDS_pval&#39;</span><span class="p">:</span>    <span class="n">bds_std</span><span class="p">,</span>
+        <span class="s1">&#39;pct_folds_iid_%&#39;</span><span class="p">:</span> <span class="n">pct_iid</span><span class="p">,</span>
+    <span class="p">})</span>
+
+<span class="n">final_summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary_rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;# lags&#39;</span><span class="p">)</span>
+<span class="n">final_summary</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">RESULTS_DIR</span> <span class="o">/</span> <span class="s1">&#39;final_summary.csv&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Guardado: </span><span class="si">{</span><span class="n">RESULTS_DIR</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s2">&quot;final_summary.csv&quot;</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">final_summary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Guardado: ..\results\final_summary.csv
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>avg_MAPE_test</th>
+      <th>avg_MAE_test</th>
+      <th>avg_RMSE_test</th>
+      <th>avg_MSE_test</th>
+      <th>avg_BDS_pval</th>
+      <th>std_BDS_pval</th>
+      <th>pct_folds_iid_%</th>
+    </tr>
+    <tr>
+      <th># lags</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>7</th>
+      <td>9.068999</td>
+      <td>0.049409</td>
+      <td>0.074539</td>
+      <td>0.006374</td>
+      <td>0.451317</td>
+      <td>0.240362</td>
+      <td>80.000000</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>9.538158</td>
+      <td>0.053903</td>
+      <td>0.074545</td>
+      <td>0.005919</td>
+      <td>0.325097</td>
+      <td>0.113106</td>
+      <td>100.000000</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>10.484893</td>
+      <td>0.059019</td>
+      <td>0.090669</td>
+      <td>0.009196</td>
+      <td>0.618543</td>
+      <td>0.289223</td>
+      <td>100.000000</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>13.793621</td>
+      <td>0.088840</td>
+      <td>0.126615</td>
+      <td>0.017552</td>
+      <td>0.736831</td>
+      <td>0.288578</td>
+      <td>100.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Comentario — tabla resumen comparativa (la tabla de decisión final)</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>lag</p></th>
+<th class="head"><p>avg_RMSE</p></th>
+<th class="head"><p>avg_MAE</p></th>
+<th class="head"><p>avg_MAPE</p></th>
+<th class="head"><p>avg_BDS</p></th>
+<th class="head"><p>pct_iid</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>0.0745</p></td>
+<td><p>0.0494</p></td>
+<td><p>9.07 %</p></td>
+<td><p>0.451</p></td>
+<td><p>80 %</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p>0.0745</p></td>
+<td><p>0.0539</p></td>
+<td><p>9.54 %</p></td>
+<td><p>0.325</p></td>
+<td><p><strong>100 %</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>21</p></td>
+<td><p>0.0907</p></td>
+<td><p>0.0590</p></td>
+<td><p>10.48 %</p></td>
+<td><p>0.619</p></td>
+<td><p>100 %</p></td>
+</tr>
+<tr class="row-odd"><td><p>28</p></td>
+<td><p>0.1266</p></td>
+<td><p>0.0888</p></td>
+<td><p>13.79 %</p></td>
+<td><p>0.737</p></td>
+<td><p>100 %</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Empate técnico entre lag 7 y lag 14 en RMSE</strong> (difieren en 6 milésimas; estadísticamente indistinguibles con el std observado). Tres criterios de desempate:</p>
+<ol class="arabic simple">
+<li><p><strong>RMSE puro</strong> → lag 7 (por 0.000006).</p></li>
+<li><p><strong>MAE y MAPE</strong> → lag 7 (∼10 % mejor).</p></li>
+<li><p><strong>BDS (<code class="docutils literal notranslate"><span class="pre">pct_folds_iid</span></code>)</strong> → lag <strong>14</strong> (100 % vs 80 %).</p></li>
+</ol>
+<p>el RMSE/MAE dicen que <strong>lag 7 es marginalmente más preciso en promedio</strong>, pero el BDS y la estabilidad inter-fold (de nb2: std RMSE 0.003 para lag 14 vs 0.011 para lag 7) dicen que <strong>lag 14 es más robusto</strong>. Para un modelo de producción que sirve predicciones de volatilidad, la estabilidad pesa más que los 10 % de mejora marginal en MAE</p>
+<p>Actualmente el pipeline (nb2 ranking + nb4) escoge <strong>lag 7</strong> porque <code class="docutils literal notranslate"><span class="pre">ranking_arch.csv</span></code> ordena por <code class="docutils literal notranslate"><span class="pre">test_rmse_avg</span></code>. Es una decisión <strong>defendible pero no única</strong></p>
+<p><strong>Lag 21 y 28 quedan descartados sin debate</strong>: peor RMSE/MAE/MAPE, peor estabilidad, y su alta <code class="docutils literal notranslate"><span class="pre">pct_iid</span></code> NO compensa porque es trivialmente iid (residuos grandes y dispersos que el BDS no puede diferenciar de ruido).</p>
+</section>
+<section id="curvas-temporales-train-val-test-con-predicciones-h-1">
+<h2>6. Curvas temporales <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">/</span> <span class="pre">val</span> <span class="pre">/</span> <span class="pre">test</span></code> con predicciones (h=1)<a class="headerlink" href="#curvas-temporales-train-val-test-con-predicciones-h-1" title="Link to this heading">#</a></h2>
+<p>Para cada tamaño de lag dibujamos tres paneles (mejor, mediano y peor fold por RMSE). Cada panel concatena las tres ventanas (<code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">val</span></code>, <code class="docutils literal notranslate"><span class="pre">test</span></code>) en el eje x y muestra:</p>
+<ul class="simple">
+<li><p><strong>Actual</strong> de cada subset (negro, con ligera variación de marcador).</p></li>
+<li><p><strong>Predicho</strong> de cada subset (azul para train, naranja para val, rojo para test).</p></li>
+</ul>
+<p>Se grafica la serie del horizonte 1 (columna 0 de las matrices <code class="docutils literal notranslate"><span class="pre">y_*</span></code>), que es la predicción más inmediata. Las figuras se guardan en <code class="docutils literal notranslate"><span class="pre">notebooks/figs/</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">rank_folds_by_rmse</span><span class="p">(</span><span class="n">results_for_lag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Devuelve (best, median, worst) según RMSE promedio 7-step.&quot;&quot;&quot;</span>
+    <span class="n">rmses</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">results_for_lag</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">folds_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rmses</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">rmses</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+    <span class="n">best</span>   <span class="o">=</span> <span class="n">folds_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">worst</span>  <span class="o">=</span> <span class="n">folds_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">median</span> <span class="o">=</span> <span class="n">folds_sorted</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">folds_sorted</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">best</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">worst</span><span class="p">,</span> <span class="n">rmses</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_fold_segments</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dibuja en ax las series train/val/test (actual y predicho) concatenadas.&quot;&quot;&quot;</span>
+    <span class="n">y_tr</span>    <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_train_true&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">];</span> <span class="n">yhat_tr</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_train_pred&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">y_va</span>    <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_val_true&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">];</span>   <span class="n">yhat_va</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_val_pred&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">y_te</span>    <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_test_true&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">];</span>  <span class="n">yhat_te</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;y_test_pred&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">n_tr</span><span class="p">,</span> <span class="n">n_va</span><span class="p">,</span> <span class="n">n_te</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_tr</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_va</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_te</span><span class="p">)</span>
+    <span class="n">idx_tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_tr</span><span class="p">)</span>
+    <span class="n">idx_va</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_tr</span><span class="p">,</span> <span class="n">n_tr</span> <span class="o">+</span> <span class="n">n_va</span><span class="p">)</span>
+    <span class="n">idx_te</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_tr</span> <span class="o">+</span> <span class="n">n_va</span><span class="p">,</span> <span class="n">n_tr</span> <span class="o">+</span> <span class="n">n_va</span> <span class="o">+</span> <span class="n">n_te</span><span class="p">)</span>
+
+    <span class="c1"># Actuales (tonos de negro/gris para distinguir sin duplicar la entrada del legend)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">idx_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>   <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Train actual&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">idx_va</span><span class="p">,</span> <span class="n">y_va</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;dimgray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Val actual&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">idx_te</span><span class="p">,</span> <span class="n">y_te</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>   <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Test actual&#39;</span><span class="p">)</span>
+    <span class="c1"># Predichos</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">idx_tr</span><span class="p">,</span> <span class="n">yhat_tr</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Train predicho&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">idx_va</span><span class="p">,</span> <span class="n">yhat_va</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span>    <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Val predicho&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">idx_te</span><span class="p">,</span> <span class="n">yhat_te</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span>       <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Test predicho&#39;</span><span class="p">)</span>
+    <span class="c1"># Separadores</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">n_tr</span><span class="p">,</span>        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">n_tr</span> <span class="o">+</span> <span class="n">n_va</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Índice temporal (train | val | test)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Volatilidad (h=1)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_title_extras</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Devuelve el sufijo cosmético con arch/lr/gap_ratio si nb2 los persistió.&quot;&quot;&quot;</span>
+    <span class="n">bits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="s1">&#39;best_arch&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">bits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;arch=</span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;best_arch&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;best_lr&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">bits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;lr=</span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;best_lr&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.0e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;gap_ratio&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">bits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gap_ratio=</span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;gap_ratio&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;  |  &#39;</span> <span class="o">+</span> <span class="s1">&#39;  &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bits</span><span class="p">))</span> <span class="k">if</span> <span class="n">bits</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+
+<span class="k">for</span> <span class="n">n_lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+    <span class="n">best_f</span><span class="p">,</span> <span class="n">median_f</span><span class="p">,</span> <span class="n">worst_f</span><span class="p">,</span> <span class="n">rmses</span> <span class="o">=</span> <span class="n">rank_folds_by_rmse</span><span class="p">(</span><span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">])</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">fold</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="n">best_f</span><span class="p">,</span> <span class="n">median_f</span><span class="p">,</span> <span class="n">worst_f</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Best&#39;</span><span class="p">,</span> <span class="s1">&#39;Median&#39;</span><span class="p">,</span> <span class="s1">&#39;Worst&#39;</span><span class="p">]):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">][</span><span class="n">fold</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1"> fold (fold=</span><span class="si">{</span><span class="n">fold</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">) — lag=</span><span class="si">{</span><span class="n">n_lag</span><span class="si">}</span><span class="s1">  |  &#39;</span>
+                 <span class="sa">f</span><span class="s2">&quot;RMSE_avg=</span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  |  &quot;</span>
+                 <span class="sa">f</span><span class="s2">&quot;BDS p-value h1=</span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;bds_pvalue_h1&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_title_extras</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plot_fold_segments</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Desempeño train/val/test — lag=</span><span class="si">{</span><span class="n">n_lag</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.00</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">fig_path</span> <span class="o">=</span> <span class="n">FIGS_DIR</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;segments_lag</span><span class="si">{</span><span class="n">n_lag</span><span class="si">}</span><span class="s1">.png&#39;</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Guardado: </span><span class="si">{</span><span class="n">fig_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Guardado: figs\segments_lag7.png
+</pre></div>
+</div>
+<img alt="../_images/377493c9f01086502309215a97aa61d38d09c7e412582cc230426d9cc3bb7545.png" src="../_images/377493c9f01086502309215a97aa61d38d09c7e412582cc230426d9cc3bb7545.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Guardado: figs\segments_lag14.png
+</pre></div>
+</div>
+<img alt="../_images/ba422436563035f12526213a5a58d84dd6b2496589be65b79a1bd2f2c74339ff.png" src="../_images/ba422436563035f12526213a5a58d84dd6b2496589be65b79a1bd2f2c74339ff.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Guardado: figs\segments_lag21.png
+</pre></div>
+</div>
+<img alt="../_images/9f7538e385d322988e5d0229912572b28f94976e298f4ddb89aaf1d83a72cd89.png" src="../_images/9f7538e385d322988e5d0229912572b28f94976e298f4ddb89aaf1d83a72cd89.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Guardado: figs\segments_lag28.png
+</pre></div>
+</div>
+<img alt="../_images/7e4ce60d5854373ab1db515fd0b3014688c4841280090c60f5572ad1e6331b14.png" src="../_images/7e4ce60d5854373ab1db515fd0b3014688c4841280090c60f5572ad1e6331b14.png" />
+</div>
+</div>
+<p><strong>Comentario — curvas temporales train/val/test (4 figuras, 3 paneles cada una)</strong></p>
+<p>Cada figura muestra la serie h=1 real vs predicha concatenando los 3 subsets (train, val, test) en orden cronológico, para el mejor/mediano/peor fold del lag. Qué mirar y qué valida la figura:</p>
+<ul class="simple">
+<li><p><strong>Continuidad del ajuste entre subsets</strong>: si el modelo está bien escalado (StandardScaler fit solo con train), la predicción no debería tener un “salto” artificial al cruzar del train al val o test. En estas figuras se ve que la transición es fluida — buena señal del pipeline.</p></li>
+<li><p><strong>Best fold</strong>: predicción (roja) muy cerca de real (negra) en test, tracking amplitud y timing.</p></li>
+<li><p><strong>Median fold</strong>: seguimiento correcto en forma pero atenuación en amplitud (el modelo aplana los picos, subestima la vol extrema).</p></li>
+<li><p><strong>Worst fold</strong>: la predicción se despega sostenidamente en tramos del test. Para lag 7, esto es el Fold 5 con régimen 2024-2025 — consistente con el BDS que detectó no-iid en ese fold.</p></li>
+</ul>
+<p>Estas 4 figuras (<code class="docutils literal notranslate"><span class="pre">segments_lag{7,14,21,28}.png</span></code>) son <strong>las piezas visuales más fuertes</strong> del reporte final: comunican en un vistazo la calidad del ajuste y sus limitaciones. Una figura vale más que 10 tablas de métricas.</p>
+</section>
+<section id="rmse-por-fold">
+<h2>7. RMSE por fold<a class="headerlink" href="#rmse-por-fold" title="Link to this heading">#</a></h2>
+<p>Una curva por tamaño de lag mostrando el RMSE promedio (7-step) de cada fold.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">n_lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+    <span class="n">rmses_folds</span> <span class="o">=</span> <span class="p">[</span><span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">][</span><span class="n">f</span><span class="p">][</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">]]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rmses_folds</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">rmses_folds</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;lag=</span><span class="si">{</span><span class="n">n_lag</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Fold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;RMSE 7-step (test)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;RMSE por fold y tamaño de lag&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig_path</span> <span class="o">=</span> <span class="n">FIGS_DIR</span> <span class="o">/</span> <span class="s1">&#39;rmse_por_fold.png&#39;</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Guardado: </span><span class="si">{</span><span class="n">fig_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Guardado: figs\rmse_por_fold.png
+</pre></div>
+</div>
+<img alt="../_images/7591bd2fec00cdf618662acc477dd4f45615bd498d55681be4c6bb2f04e151d3.png" src="../_images/7591bd2fec00cdf618662acc477dd4f45615bd498d55681be4c6bb2f04e151d3.png" />
+</div>
+</div>
+<p><strong>Comentario — RMSE por fold (diagnóstico cross-lag)</strong></p>
+<p>Replica la figura de nb2 cell 26 pero con residuos recalculados sobre <code class="docutils literal notranslate"><span class="pre">all_results</span></code> (mismos números). Refuerza tres puntos:</p>
+<ol class="arabic simple">
+<li><p>Lag 7 y 14 se superponen salvo en Fold 5 (lag 7 se dispara).</p></li>
+<li><p>Lag 28 es sistemáticamente el peor en 4 de 5 folds.</p></li>
+<li><p>Fold 4 del lag 28 (0.176) es el outlier global del experimento.</p></li>
+</ol>
+</section>
+<section id="rmse-promedio-por-horizonte-7-puntos">
+<h2>8. RMSE promedio por horizonte (7 puntos)<a class="headerlink" href="#rmse-promedio-por-horizonte-7-puntos" title="Link to this heading">#</a></h2>
+<p>Una línea por tamaño de lag con 7 puntos: RMSE promedio (entre folds) para cada horizonte <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">…,</span> <span class="pre">7</span></code>. El error debe <strong>crecer</strong> con el horizonte; si no lo hiciera, habría que sospechar data leakage.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">n_lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+    <span class="n">rmse_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">][</span><span class="n">f</span><span class="p">][</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">[</span><span class="n">n_lag</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N_STEPS_FORECAST</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">rmse_h</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;lag=</span><span class="si">{</span><span class="n">n_lag</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Horizonte (días adelante)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;RMSE promedio (test, sobre folds)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Degradación del error con el horizonte&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">fig_path</span> <span class="o">=</span> <span class="n">FIGS_DIR</span> <span class="o">/</span> <span class="s1">&#39;rmse_por_horizonte.png&#39;</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Guardado: </span><span class="si">{</span><span class="n">fig_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Guardado: figs\rmse_por_horizonte.png
+</pre></div>
+</div>
+<img alt="../_images/139f9291368fca9fb6e7a7baa2712e3872c536d7b0a0ea85c9881ae1cf340b74.png" src="../_images/139f9291368fca9fb6e7a7baa2712e3872c536d7b0a0ea85c9881ae1cf340b74.png" />
+</div>
+</div>
+<p><strong>Comentario — degradación del RMSE por horizonte</strong></p>
+<p>Cuatro curvas monotónicamente crecientes de h_1 a h_7. Confirma <strong>ausencia de data leakage</strong> (si el error bajara con el horizonte o fuera plano, sería un bug del pipeline de features/escalado).</p>
+<p>El orden vertical de las curvas (28 &gt; 21 &gt; 7 ≈ 14) sostiene la jerarquía del resumen: ventanas largas = más error en todos los horizontes, no solo en el promedio.</p>
+<p>Observación cualitativa: la <strong>pendiente</strong> de la degradación es similar entre lags (todas más o menos paralelas). Implicación: no hay un lag específico que se degrade “más rápido” — la dificultad intrínseca de proyectar al futuro es universal, el offset inicial (h_1) es lo que marca la diferencia.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">best_lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">final_summary</span><span class="p">[</span><span class="s1">&#39;avg_RMSE_test&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">())</span>
+<span class="n">row</span> <span class="o">=</span> <span class="n">final_summary</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">best_lag</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Lag ganador por RMSE promedio: </span><span class="si">{</span><span class="n">best_lag</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  avg_RMSE_test  = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;avg_RMSE_test&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  avg_MAE_test   = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;avg_MAE_test&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  avg_MAPE_test  = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;avg_MAPE_test&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  avg_BDS_pval   = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;avg_BDS_pval&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  pct_folds_iid  = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;pct_folds_iid_%&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">)</span>
+
+<span class="c1"># Lag ganador por BDS (más folds con residuos iid)</span>
+<span class="n">best_lag_bds</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">final_summary</span><span class="p">[</span><span class="s1">&#39;pct_folds_iid_%&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Lag ganador por BDS (mayor %% de folds iid): </span><span class="si">{</span><span class="n">best_lag_bds</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lag ganador por RMSE promedio: 7
+  avg_RMSE_test  = 0.0745
+  avg_MAE_test   = 0.0494
+  avg_MAPE_test  = 9.0690
+  avg_BDS_pval   = 0.4513
+  pct_folds_iid  = 80.0 %
+
+Lag ganador por BDS (mayor %% de folds iid): 14
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="2_model_training.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Notebook 2 — Entrenamiento del MLP</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="4_final_model.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Notebook 4 — Entrenamiento del modelo final para producción</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-imports-rutas-y-creacion-de-figs">Setup — imports, rutas y creación de <code class="docutils literal notranslate"><span class="pre">figs/</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cargar-los-resultados-del-notebook-2">1. Cargar los resultados del notebook 2</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-bds-que-es-y-como-se-interpreta">2. Test BDS — qué es y cómo se interpreta</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aplicacion-del-bds-por-cada-lag-fold">3. Aplicación del BDS por cada <code class="docutils literal notranslate"><span class="pre">lag</span> <span class="pre">×</span> <span class="pre">fold</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tablas-finales-por-tamano-de-lag">4. Tablas finales por tamaño de lag</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-resumen-comparativa-final-4-lags">5. Tabla resumen comparativa final (4 lags)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curvas-temporales-train-val-test-con-predicciones-h-1">6. Curvas temporales <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">/</span> <span class="pre">val</span> <span class="pre">/</span> <span class="pre">test</span></code> con predicciones (h=1)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmse-por-fold">7. RMSE por fold</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rmse-promedio-por-horizonte-7-puntos">8. RMSE promedio por horizonte (7 puntos)</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Juan Andrés Ramos Cardona
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

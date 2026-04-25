@@ -1,0 +1,892 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook 4 — Entrenamiento del modelo final para producción &#8212; BTC Volatility MLP — Proyecto Integrador 11.15</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/4_final_model';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Notebook 3 — Análisis de residuos y visualizaciones finales" href="3_residual_analysis.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">BTC Volatility MLP — Proyecto Integrador 11.15</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    BTC Volatility MLP — Proyecto Integrador 11.15
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_eda_volatility.html">1. Análisis exploratorio y volatilidad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_model_training.html">2. Entrenamiento del MLP multisalida</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_residual_analysis.html">3. Análisis de residuos y test BDS</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">4. Modelo final para producción</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops/edit/main/notebooks/4_final_model.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops/issues/new?title=Issue%20on%20page%20%2Fnotebooks/4_final_model.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/4_final_model.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook 4 — Entrenamiento del modelo final para producción</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-imports-y-rutas">0. Setup — imports y rutas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#leer-la-combinacion-ganadora-del-ranking">1. Leer la combinación ganadora del ranking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cargar-la-serie-y-recomputar-la-volatilidad">2. Cargar la serie y recomputar la volatilidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construir-todas-las-ventanas-x-y-de-la-serie-completa">3. Construir todas las ventanas (X, y) de la serie completa</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#escalado-y-entrenamiento-final">4. Escalado y entrenamiento final</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-de-referencia-sobre-los-datos-de-entrenamiento">5. Métrica de referencia sobre los datos de entrenamiento</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serializacion-del-artefacto-canonico">6. Serialización del artefacto canónico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sanity-check-del-artefacto-serializado">7. Sanity check del artefacto serializado</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final">8. Final</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="notebook-4-entrenamiento-del-modelo-final-para-produccion">
+<h1>Notebook 4 — Entrenamiento del modelo final para producción<a class="headerlink" href="#notebook-4-entrenamiento-del-modelo-final-para-produccion" title="Link to this heading">#</a></h1>
+<section id="setup-imports-y-rutas">
+<h2>0. Setup — imports y rutas<a class="headerlink" href="#setup-imports-y-rutas" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.neural_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPRegressor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvergenceWarning</span>
+
+<span class="n">DATA_PATH</span>    <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../data/btc_1d_data_2018_to_2025.csv&#39;</span><span class="p">)</span>
+<span class="n">RESULTS_DIR</span>  <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../results&#39;</span><span class="p">)</span>
+<span class="n">APP_DIR</span>      <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../app&#39;</span><span class="p">)</span>
+<span class="n">MODEL_PATH</span>   <span class="o">=</span> <span class="n">APP_DIR</span> <span class="o">/</span> <span class="s1">&#39;model.joblib&#39;</span>
+
+<span class="n">WINDOW_SIZE</span>      <span class="o">=</span> <span class="mi">30</span>
+<span class="n">ANNUALIZATION</span>    <span class="o">=</span> <span class="mi">365</span>
+<span class="n">N_STEPS_FORECAST</span> <span class="o">=</span> <span class="mi">7</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">,.6f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="leer-la-combinacion-ganadora-del-ranking">
+<h2>1. Leer la combinación ganadora del ranking<a class="headerlink" href="#leer-la-combinacion-ganadora-del-ranking" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ranking_arch.csv</span></code> tiene una fila por <code class="docutils literal notranslate"><span class="pre">(n_lag,</span> <span class="pre">arch)</span></code>. El ganador global es el de menor <code class="docutils literal notranslate"><span class="pre">test_rmse_avg</span></code>. Sus <code class="docutils literal notranslate"><span class="pre">hidden_layers</span></code> y el valor de <code class="docutils literal notranslate"><span class="pre">n_lag</span></code> se usan como <code class="docutils literal notranslate"><span class="pre">n_steps_input</span></code> del modelo final. También leemos <code class="docutils literal notranslate"><span class="pre">config.joblib</span></code> para reutilizar los mismos <code class="docutils literal notranslate"><span class="pre">MLP_PARAMS</span></code> que se usaron en la CV, garantizando coherencia entre el modelo de validación y el de producción.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ranking</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">RESULTS_DIR</span> <span class="o">/</span> <span class="s1">&#39;ranking_arch.csv&#39;</span><span class="p">)</span>
+<span class="n">config</span>  <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">RESULTS_DIR</span> <span class="o">/</span> <span class="s1">&#39;config.joblib&#39;</span><span class="p">)</span>
+
+<span class="n">winner</span> <span class="o">=</span> <span class="n">ranking</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;test_rmse_avg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">N_STEPS_INPUT</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">winner</span><span class="p">[</span><span class="s1">&#39;n_lag&#39;</span><span class="p">])</span>
+<span class="n">HIDDEN_LAYERS</span>  <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">winner</span><span class="p">[</span><span class="s1">&#39;hidden_layers&#39;</span><span class="p">]))</span>  <span class="c1"># &#39;[64]&#39; -&gt; (64,)</span>
+<span class="n">MLP_PARAMS</span>     <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;mlp_params&#39;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Combinacion ganadora:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  n_lag          = </span><span class="si">{</span><span class="n">N_STEPS_INPUT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  arch           = </span><span class="si">{</span><span class="n">winner</span><span class="p">[</span><span class="s2">&quot;arch&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  hidden_layers  = </span><span class="si">{</span><span class="n">HIDDEN_LAYERS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  test_rmse_avg  = </span><span class="si">{</span><span class="n">winner</span><span class="p">[</span><span class="s2">&quot;test_rmse_avg&quot;</span><span class="p">]</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  test_mae_avg   = </span><span class="si">{</span><span class="n">winner</span><span class="p">[</span><span class="s2">&quot;test_mae_avg&quot;</span><span class="p">]</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  n_folds_won    = </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">winner</span><span class="p">[</span><span class="s2">&quot;n_folds_won&quot;</span><span class="p">])</span><span class="si">}</span><span class="s1"> / 5&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">MLP_PARAMS (heredados de nb2):&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">MLP_PARAMS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s1">22s</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Combinacion ganadora:
+  n_lag          = 7
+  arch           = h[32,32,128]_lr1e-03
+  hidden_layers  = (32, 32, 128)
+  test_rmse_avg  = 0.0746
+  test_mae_avg   = 0.0493
+  n_folds_won    = 0 / 5
+
+MLP_PARAMS (heredados de nb2):
+  solver                 = adam
+  activation             = relu
+  max_iter               = 500
+  early_stopping         = True
+  validation_fraction    = 0.1
+  n_iter_no_change       = 20
+  tol                    = 0.0001
+  learning_rate_init     = 0.001
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — lectura de la combinación ganadora</strong></p>
+<p>Confirmación del ganador global del <code class="docutils literal notranslate"><span class="pre">ranking_arch.csv</span></code> del grid expandido:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">n_lag</span> <span class="pre">=</span> <span class="pre">7</span></code></strong>, <strong><code class="docutils literal notranslate"><span class="pre">hidden_layers</span> <span class="pre">=</span> <span class="pre">(32,</span> <span class="pre">32,</span> <span class="pre">128)</span></code></strong>, <code class="docutils literal notranslate"><span class="pre">test_rmse_avg</span> <span class="pre">=</span> <span class="pre">0.0746</span></code>, <code class="docutils literal notranslate"><span class="pre">test_mae_avg</span> <span class="pre">=</span> <span class="pre">0.0493</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">n_folds_won</span> <span class="pre">=</span> <span class="pre">0/5</span></code></strong> — la arquitectura <strong>NUNCA ganó un fold individual</strong> en la CV de nb2, pero tiene el mejor <code class="docutils literal notranslate"><span class="pre">test_rmse_avg</span></code> promediando sobre las 15 mediciones (3 seeds × 5 folds). Esa es la propiedad deseada para producción: <strong>consistencia, no brillo puntual</strong>. Una arch que gana el Fold 1 con RMSE 0.05 pero explota en el Fold 5 con RMSE 0.12 puede tener promedio peor que esta, que entrega ~0.075 en todos los folds.</p></li>
+</ul>
+<p><strong><code class="docutils literal notranslate"><span class="pre">MLP_PARAMS</span></code> heredados vía <code class="docutils literal notranslate"><span class="pre">config['mlp_params']</span></code></strong>: <code class="docutils literal notranslate"><span class="pre">lr=1e-3</span></code> (el único valor barrido en nb2), <code class="docutils literal notranslate"><span class="pre">max_iter=500</span></code>, <code class="docutils literal notranslate"><span class="pre">early_stopping=True</span></code>, <code class="docutils literal notranslate"><span class="pre">n_iter_no_change=20</span></code>.</p>
+</section>
+<section id="cargar-la-serie-y-recomputar-la-volatilidad">
+<h2>2. Cargar la serie y recomputar la volatilidad<a class="headerlink" href="#cargar-la-serie-y-recomputar-la-volatilidad" title="Link to this heading">#</a></h2>
+<p>Mismos pasos que el notebook 2 para garantizar reproducibilidad: carga de <code class="docutils literal notranslate"><span class="pre">Date</span></code> y <code class="docutils literal notranslate"><span class="pre">Close</span></code>, limpieza temporal, cálculo de <code class="docutils literal notranslate"><span class="pre">LogReturn</span></code> y <code class="docutils literal notranslate"><span class="pre">Volatility</span></code> rolling anualizada por √365.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
+<span class="k">assert</span> <span class="p">{</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">btc</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="n">btc</span> <span class="o">=</span> <span class="n">btc</span><span class="p">[[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+<span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">btc</span> <span class="o">=</span> <span class="p">(</span><span class="n">btc</span>
+       <span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">])</span>
+       <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+       <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+       <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">btc</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">]</span>
+                     <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">WINDOW_SIZE</span><span class="p">)</span>
+                     <span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ANNUALIZATION</span><span class="p">))</span>
+<span class="n">btc</span> <span class="o">=</span> <span class="n">btc</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">,</span> <span class="s1">&#39;Volatility&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">series</span> <span class="o">=</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Longitud de la serie de volatilidad: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">)</span><span class="si">:</span><span class="s1">,</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Rango de fechas: </span><span class="si">{</span><span class="n">btc</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s1"> -&gt; </span><span class="si">{</span><span class="n">btc</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Longitud de la serie de volatilidad: 2,891
+Rango de fechas: 2018-02-01 -&gt; 2025-12-31
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — serie recomputada</strong></p>
+<p><strong>2 891 filas</strong>, rango <code class="docutils literal notranslate"><span class="pre">2018-02-01</span> <span class="pre">→</span> <span class="pre">2025-12-31</span></code>.</p>
+</section>
+<section id="construir-todas-las-ventanas-x-y-de-la-serie-completa">
+<h2>3. Construir todas las ventanas (X, y) de la serie completa<a class="headerlink" href="#construir-todas-las-ventanas-x-y-de-la-serie-completa" title="Link to this heading">#</a></h2>
+<p>Para cada índice <code class="docutils literal notranslate"><span class="pre">i</span></code> válido: <code class="docutils literal notranslate"><span class="pre">X[i]</span> <span class="pre">=</span> <span class="pre">series[i</span> <span class="pre">:</span> <span class="pre">i+n_in]</span></code>, <code class="docutils literal notranslate"><span class="pre">y[i]</span> <span class="pre">=</span> <span class="pre">series[i+n_in</span> <span class="pre">:</span> <span class="pre">i+n_in+n_out]</span></code>. En producción <strong>no</strong> se hace split — queremos usar toda la información disponible para el modelo final. La validación de generalización ya quedó cubierta por la CV del notebook 2.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">build_windows</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">n_in</span><span class="p">,</span> <span class="n">n_out</span><span class="p">):</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_in</span> <span class="o">-</span> <span class="n">n_out</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">n_in</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">n_out</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">n_in</span><span class="p">]</span>
+        <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_in</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">n_in</span> <span class="o">+</span> <span class="n">n_out</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">build_windows</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">N_STEPS_INPUT</span><span class="p">,</span> <span class="n">N_STEPS_FORECAST</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;X.shape = </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">   (muestras, n_steps_input)&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;y.shape = </span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">   (muestras, n_steps_forecast)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>X.shape = (2878, 7)   (muestras, n_steps_input)
+y.shape = (2878, 7)   (muestras, n_steps_forecast)
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — ventanas de entrenamiento</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">X.shape</span> <span class="pre">=</span> <span class="pre">(2878,</span> <span class="pre">7)</span></code> — 2 878 ventanas de input de 7 días.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">y.shape</span> <span class="pre">=</span> <span class="pre">(2878,</span> <span class="pre">7)</span></code> — 2 878 vectores target de 7 pasos.</p></li>
+<li><p>Fórmula: N = 2 891 − 7 (input) − 7 (output) + 1 = 2 878. Cuadra.</p></li>
+</ul>
+<p><strong>Volumen de training relativo a la CV</strong>: cada fold de nb2 tenía ~500-600 muestras de train. El modelo final entrena con 2 878 — <strong>5-6× más datos</strong>. En teoría esto debería darnos un modelo más preciso que el fold ganador de la CV (más datos = menos varianza en los pesos estimados).</p>
+</section>
+<section id="escalado-y-entrenamiento-final">
+<h2>4. Escalado y entrenamiento final<a class="headerlink" href="#escalado-y-entrenamiento-final" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">StandardScaler</span></code> ajustado sobre <strong>todas</strong> las ventanas (para producción, a diferencia de la CV). <code class="docutils literal notranslate"><span class="pre">MLPRegressor</span></code> con los hiperparámetros heredados del notebook 2 y <code class="docutils literal notranslate"><span class="pre">random_state=0</span></code> fijo. El early stopping interno (<code class="docutils literal notranslate"><span class="pre">validation_fraction=0.1</span></code>) sigue activo para que el modelo no sobreajuste aunque entrenemos con más datos.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scaler_x</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">scaler_y</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<span class="n">X_s</span> <span class="o">=</span> <span class="n">scaler_x</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">y_s</span> <span class="o">=</span> <span class="n">scaler_y</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">ConvergenceWarning</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">MLPRegressor</span><span class="p">(</span>
+        <span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="n">HIDDEN_LAYERS</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">MLP_PARAMS</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_s</span><span class="p">,</span> <span class="n">y_s</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Entrenamiento final completado.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  n_iter    = </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">n_iter_</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  converged = </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">n_iter_</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">MLP_PARAMS</span><span class="p">[</span><span class="s2">&quot;max_iter&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  n_layers (incl. output) = </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">n_layers_</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Entrenamiento final completado.
+  n_iter    = 43
+  converged = True
+  n_layers (incl. output) = 5
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — entrenamiento final</strong></p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">n_iter</span> <span class="pre">=</span> <span class="pre">43</span></code></strong> — el modelo convergió en 43 épocas, muy por debajo del <code class="docutils literal notranslate"><span class="pre">max_iter=500</span></code>. Señal de buena elección de <code class="docutils literal notranslate"><span class="pre">learning_rate_init</span></code> (1e-3 es el sweet spot para esta arq): gradientes que progresan rápido sin oscilar.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">converged</span> <span class="pre">=</span> <span class="pre">True</span></code></strong> — el early_stopping cortó por falta de mejora en el val interno (20 épocas consecutivas sin mejora en R²), no por topar iters. Es decir, el modelo se saturó genuinamente.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">n_layers_</span> <span class="pre">=</span> <span class="pre">5</span></code></strong> — 1 input + 3 hidden (32, 32, 128) + 1 output = 5 capas totales. Arquitectura replicada fielmente desde el ranking.</p></li>
+</ul>
+<p><strong>Por qué convergió tan rápido</strong> (43 vs los ~100-200 que vimos en los folds de nb2): tenemos 5× más datos de train en el modelo final, así que los gradientes son más estables y menos ruidosos → convergencia más rápida. Es una ventaja de entrenar con toda la serie.</p>
+</section>
+<section id="metrica-de-referencia-sobre-los-datos-de-entrenamiento">
+<h2>5. Métrica de referencia sobre los datos de entrenamiento<a class="headerlink" href="#metrica-de-referencia-sobre-los-datos-de-entrenamiento" title="Link to this heading">#</a></h2>
+<p>No es una medida de generalización (ya la tuvimos en la CV), pero sirve como sanity check: el modelo debe ajustar razonablemente bien. Reportamos RMSE/MAE por horizonte sobre toda la serie.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yhat_s</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_s</span><span class="p">)</span>
+<span class="n">yhat</span>   <span class="o">=</span> <span class="n">scaler_y</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">yhat_s</span><span class="p">)</span>
+
+<span class="n">mae_h</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">yhat</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">rmse_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">yhat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">mape_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">yhat</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="n">ref</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;horizon&#39;</span><span class="p">:</span>  <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;h_</span><span class="si">{</span><span class="n">h</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_STEPS_FORECAST</span><span class="p">)],</span>
+    <span class="s1">&#39;MAE&#39;</span><span class="p">:</span>      <span class="n">mae_h</span><span class="p">,</span>
+    <span class="s1">&#39;RMSE&#39;</span><span class="p">:</span>     <span class="n">rmse_h</span><span class="p">,</span>
+    <span class="s1">&#39;MAPE (%)&#39;</span><span class="p">:</span> <span class="n">mape_h</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sanity check sobre los datos de entrenamiento (NO es test de generalizacion):&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Promedios -&gt; MAE=</span><span class="si">{</span><span class="n">mae_h</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">  RMSE=</span><span class="si">{</span><span class="n">rmse_h</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">  MAPE=</span><span class="si">{</span><span class="n">mape_h</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sanity check sobre los datos de entrenamiento (NO es test de generalizacion):
+horizon      MAE     RMSE  MAPE (%)
+    h_1 0.023495 0.046223  4.186923
+    h_2 0.033818 0.064400  5.970669
+    h_3 0.042879 0.078030  7.642733
+    h_4 0.050555 0.089606  8.989173
+    h_5 0.058535 0.101134 10.408754
+    h_6 0.065511 0.111260 11.581186
+    h_7 0.071463 0.120398 12.521924
+
+Promedios -&gt; MAE=0.0495  RMSE=0.0873  MAPE=8.76%
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — métricas de referencia en training (¡NO es generalización!)</strong></p>
+<p><strong>test de generalización</strong>.  ¿qué es?</p>
+<p>Es el error de predicción del modelo sobre TODAS las 2 878 ventanas (el 90 % que entrenó + el 10 % de val interna del early_stopping). No es error de generalización porque la mayoría de estas muestras el modelo las vio; no es training error puro tampoco porque incluye la val interna que el modelo usó para cortar.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>métrica</p></th>
+<th class="head"><p>nb4 “train” (2 878 ventanas)</p></th>
+<th class="head"><p>nb2 CV test (lag=7)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RMSE</p></td>
+<td><p>0.0873</p></td>
+<td><p>0.0745</p></td>
+</tr>
+<tr class="row-odd"><td><p>MAE</p></td>
+<td><p>0.0495</p></td>
+<td><p>0.0494</p></td>
+</tr>
+<tr class="row-even"><td><p>MAPE</p></td>
+<td><p>8.76 %</p></td>
+<td><p>9.07 %</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>El MAE es prácticamente idéntico y el MAPE es mejor en nb4. Pero <strong>el RMSE de nb4 es PEOR</strong> (0.087 vs 0.075). Contraintuitivo.</p>
+<p><strong>Explicación</strong>: las 2 878 ventanas incluyen los períodos de régimen extremo (COVID-2020, Luna-2022, FTX-2022) con vol &gt; 1.5. El MLP final los ve y los modela, pero su predicción en esos picos falla fuerte (residuos de 0.3+) y el RMSE cuadra-doble ese error. La CV de nb2, al fragmentar la serie en 5 folds, <strong>separa</strong> esos picos en folds individuales cuyo promedio atenúa el outlier. Por eso el RMSE promediado sobre 5 folds da una imagen más optimista que el RMSE agregado sobre la serie completa.</p>
+</section>
+<section id="serializacion-del-artefacto-canonico">
+<h2>6. Serialización del artefacto canónico<a class="headerlink" href="#serializacion-del-artefacto-canonico" title="Link to this heading">#</a></h2>
+<p>Dict con las cinco keys que <code class="docutils literal notranslate"><span class="pre">app/api.py::_unpack_artifact</span></code> reconoce. La API carga este archivo en el arranque, expone <code class="docutils literal notranslate"><span class="pre">expected_lags</span> <span class="pre">=</span> <span class="pre">n_steps_input</span></code> y responde 7 predicciones por petición al endpoint <code class="docutils literal notranslate"><span class="pre">/predict</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">APP_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">artifact</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;model&#39;</span><span class="p">:</span>            <span class="n">model</span><span class="p">,</span>
+    <span class="s1">&#39;scaler_x&#39;</span><span class="p">:</span>         <span class="n">scaler_x</span><span class="p">,</span>
+    <span class="s1">&#39;scaler_y&#39;</span><span class="p">:</span>         <span class="n">scaler_y</span><span class="p">,</span>
+    <span class="s1">&#39;n_steps_input&#39;</span><span class="p">:</span>    <span class="n">N_STEPS_INPUT</span><span class="p">,</span>
+    <span class="s1">&#39;n_steps_forecast&#39;</span><span class="p">:</span> <span class="n">N_STEPS_FORECAST</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">artifact</span><span class="p">,</span> <span class="n">MODEL_PATH</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Guardado: </span><span class="si">{</span><span class="n">MODEL_PATH</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Tamano del artefacto: </span><span class="si">{</span><span class="n">MODEL_PATH</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> KB&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Guardado: C:\Users\juana\btc-volatility-mlops\app\model.joblib
+Tamano del artefacto: 158.1 KB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="sanity-check-del-artefacto-serializado">
+<h2>7. Sanity check del artefacto serializado<a class="headerlink" href="#sanity-check-del-artefacto-serializado" title="Link to this heading">#</a></h2>
+<p>Cargamos el modelo desde disco (como lo hará la API), emulamos el unpacking de <code class="docutils literal notranslate"><span class="pre">api.py::_unpack_artifact</span></code> y ejercitamos el pipeline de inferencia con una ventana sintética. Esto debe:</p>
+<ul class="simple">
+<li><p>Cargar sin errores.</p></li>
+<li><p>Devolver una predicción con shape <code class="docutils literal notranslate"><span class="pre">(1,</span> <span class="pre">7)</span></code>.</p></li>
+<li><p>Producir valores finitos (ni NaN ni inf).</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">loaded</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">MODEL_PATH</span><span class="p">)</span>
+<span class="n">_model</span>    <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
+<span class="n">_scaler_x</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;scaler_x&#39;</span><span class="p">]</span>
+<span class="n">_scaler_y</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;scaler_y&#39;</span><span class="p">]</span>
+<span class="n">_n_in</span>     <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;n_steps_input&#39;</span><span class="p">]</span>
+<span class="n">_n_out</span>    <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;n_steps_forecast&#39;</span><span class="p">]</span>
+
+<span class="c1"># Emulamos una peticion: ventana sintetica con n_in valores positivos</span>
+<span class="n">X_test</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">_n_in</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">X_test_s</span> <span class="o">=</span> <span class="n">_scaler_x</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_test</span>   <span class="o">=</span> <span class="n">_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_s</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">y_test</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">y_test</span> <span class="o">=</span> <span class="n">y_test</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y_test</span>   <span class="o">=</span> <span class="n">_scaler_y</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">y_test</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Shape incorrecto: </span><span class="si">{</span><span class="n">y_test</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_test</span><span class="p">)),</span> <span class="s1">&#39;Hay predicciones no finitas&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Entrada sintetica (volatilidades): </span><span class="si">{</span><span class="n">X_test</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Prediccion h=1..7              : </span><span class="si">{</span><span class="n">y_test</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Artefacto sano y consumible por la API.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Entrada sintetica (volatilidades): [0.3, 0.383, 0.467, 0.55, 0.633, 0.717, 0.8]
+Prediccion h=1..7              : [0.8139, 0.8093, 0.8229, 0.8435, 0.8595, 0.8988, 0.8741]
+
+Artefacto sano y consumible por la API.
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — sanity check del artefacto serializado</strong></p>
+<p>Emulación del consumo del modelo por <code class="docutils literal notranslate"><span class="pre">app/api.py</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Entrada sintética</strong>: volatilidades crecientes linealmente de 0.3 a 0.8 (pasando de “calma” a “stress moderado”).</p></li>
+<li><p><strong>Predicción h=1..7</strong>: <code class="docutils literal notranslate"><span class="pre">[0.81,</span> <span class="pre">0.81,</span> <span class="pre">0.82,</span> <span class="pre">0.84,</span> <span class="pre">0.86,</span> <span class="pre">0.90,</span> <span class="pre">0.87]</span></code>.</p></li>
+</ul>
+<p><strong>Lectura</strong>: el modelo predice que la volatilidad <strong>persiste y se amplifica</strong> tras una entrada que ya venía subiendo. Esto es consistente con el <strong>clustering de volatilidad</strong> observado en nb1 (ACF positiva de retornos²): cuando la vol está en ascenso, el próximo día tiene más probabilidad de vol alta que de vol baja.</p>
+<p>Los valores predichos (0.81-0.90) están en el rango realista de la distribución histórica (media 0.60, p75 0.71, max 2.12). <strong>Ninguna predicción explota</strong> (no vemos 5.0 o −1.0), confirmando que los scalers se aplicaron correctamente en ambos sentidos (forward y inverse).</p>
+<p><strong>Validaciones que pasaron</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">shape</span> <span class="pre">==</span> <span class="pre">(1,</span> <span class="pre">7)</span></code> ✓</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">all(np.isfinite(y))</span></code> ✓</p></li>
+<li><p>Carga del joblib sin errores ✓</p></li>
+<li><p>Forward pass sin warnings ✓</p></li>
+</ul>
+</section>
+<section id="final">
+<h2>8. Final<a class="headerlink" href="#final" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Modelo final listo en <code class="docutils literal notranslate"><span class="pre">../app/model.joblib</span></code> (combinación <code class="docutils literal notranslate"><span class="pre">lag</span></code> + <code class="docutils literal notranslate"><span class="pre">arch</span></code> elegida automáticamente del ranking).</p></li>
+<li><p>La API FastAPI (<code class="docutils literal notranslate"><span class="pre">app/api.py</span></code>) y los tests (<code class="docutils literal notranslate"><span class="pre">tests/test_model.py</span></code>, <code class="docutils literal notranslate"><span class="pre">tests/test_api.py</span></code>)
+<strong>Para validar end-to-end desde la raíz del repo:</strong></p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>tests/<span class="w"> </span>-v
+uvicorn<span class="w"> </span>app.api:app<span class="w"> </span>--reload<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
+</pre></div>
+</div>
+<p>El health-check <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/</span></code> debe reportar <code class="docutils literal notranslate"><span class="pre">expected_lags</span> <span class="pre">=</span> <span class="pre">N_STEPS_INPUT</span></code> y <code class="docutils literal notranslate"><span class="pre">n_steps_forecast</span> <span class="pre">=</span> <span class="pre">7</span></code>.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="3_residual_analysis.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Notebook 3 — Análisis de residuos y visualizaciones finales</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-imports-y-rutas">0. Setup — imports y rutas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#leer-la-combinacion-ganadora-del-ranking">1. Leer la combinación ganadora del ranking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cargar-la-serie-y-recomputar-la-volatilidad">2. Cargar la serie y recomputar la volatilidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construir-todas-las-ventanas-x-y-de-la-serie-completa">3. Construir todas las ventanas (X, y) de la serie completa</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#escalado-y-entrenamiento-final">4. Escalado y entrenamiento final</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-de-referencia-sobre-los-datos-de-entrenamiento">5. Métrica de referencia sobre los datos de entrenamiento</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serializacion-del-artefacto-canonico">6. Serialización del artefacto canónico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sanity-check-del-artefacto-serializado">7. Sanity check del artefacto serializado</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final">8. Final</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Juan Andrés Ramos Cardona
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

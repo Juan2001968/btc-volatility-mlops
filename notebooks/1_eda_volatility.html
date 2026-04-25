@@ -1,0 +1,1643 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Notebook 1 — EDA y cálculo de volatilidad &#8212; BTC Volatility MLP — Proyecto Integrador 11.15</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"N": "\\mathbb{N}", "R": "\\mathbb{R}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/1_eda_volatility';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notebook 2 — Entrenamiento del MLP" href="2_model_training.html" />
+    <link rel="prev" title="BTC Volatility MLP — Proyecto Integrador 11.15" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">BTC Volatility MLP — Proyecto Integrador 11.15</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    BTC Volatility MLP — Proyecto Integrador 11.15
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">1. Análisis exploratorio y volatilidad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_model_training.html">2. Entrenamiento del MLP multisalida</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_residual_analysis.html">3. Análisis de residuos y test BDS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_final_model.html">4. Modelo final para producción</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops/edit/main/notebooks/1_eda_volatility.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Juan2001968/btc-volatility-mlops/issues/new?title=Issue%20on%20page%20%2Fnotebooks/1_eda_volatility.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/1_eda_volatility.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Notebook 1 — EDA y cálculo de volatilidad</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carga-del-dataset">1. Carga del dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validacion-de-columnas-y-tipos">2. Validación de columnas y tipos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordenamiento-deduplicacion-y-manejo-de-nulos">3. Ordenamiento, deduplicación y manejo de nulos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculo-de-retornos-logaritmicos-logreturn">4. Cálculo de retornos logarítmicos (<code class="docutils literal notranslate"><span class="pre">LogReturn</span></code>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculo-de-volatilidad-historica-anualizada-volatility">5. Cálculo de volatilidad histórica anualizada (<code class="docutils literal notranslate"><span class="pre">Volatility</span></code>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limpieza-final-tras-calculos-rolling">6. Limpieza final tras cálculos rolling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estadisticas-descriptivas">7. Estadísticas descriptivas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizaciones">8. Visualizaciones</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#serie-temporal-de-precios">8.1 Serie temporal de precios</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#serie-temporal-de-retornos-diarios">8.2 Serie temporal de retornos diarios</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#histograma-de-retornos">8.3 Histograma de retornos</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#acf-de-los-retornos">8.4 ACF de los retornos</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#acf-de-los-retornos-al-cuadrado-heterocedasticidad">8.5 ACF de los retornos al cuadrado — heterocedasticidad</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#serie-temporal-de-volatilidad-historica-anualizada">8.6 Serie Temporal de Volatilidad Histórica (Anualizada)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-de-la-volatilidad-historica">8.7 Distribución de la Volatilidad Histórica</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estacionalidad-volatilidad-promedio-por-mes">8.8 Estacionalidad: Volatilidad Promedio por Mes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dinamica-de-precio-vs-volatilidad-eje-dual">8.9 Dinámica de Precio vs Volatilidad (Eje Dual)</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="notebook-1-eda-y-calculo-de-volatilidad">
+<h1>Notebook 1 — EDA y cálculo de volatilidad<a class="headerlink" href="#notebook-1-eda-y-calculo-de-volatilidad" title="Link to this heading">#</a></h1>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<p>Importamos las librerías mínimas y fijamos parámetros globales reproducibles. <code class="docutils literal notranslate"><span class="pre">WINDOW_SIZE</span> <span class="pre">=</span> <span class="pre">30</span></code> es la ventana rolling. <code class="docutils literal notranslate"><span class="pre">ANNUALIZATION</span> <span class="pre">=</span> <span class="pre">365</span></code> porque Bitcoin cotiza 365 días al año (a diferencia de acciones, donde se usa 252).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Parámetros del proyecto 11.15</span>
+<span class="n">DATA_PATH</span> <span class="o">=</span> <span class="s1">&#39;../data/btc_1d_data_2018_to_2025.csv&#39;</span>
+<span class="n">WINDOW_SIZE</span> <span class="o">=</span> <span class="mi">30</span>          <span class="c1"># ventana rolling para la volatilidad histórica</span>
+<span class="n">ANNUALIZATION</span> <span class="o">=</span> <span class="mi">365</span>       <span class="c1"># criptos cotizan 365 días al año</span>
+<span class="n">ACF_LAGS</span> <span class="o">=</span> <span class="mi">40</span>             <span class="c1"># número de lags para las ACF</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">,.6f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">110</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="carga-del-dataset">
+<h2>1. Carga del dataset<a class="headerlink" href="#carga-del-dataset" title="Link to this heading">#</a></h2>
+<p>Leemos el CSV ya generado por el script de descarga. El archivo debe contener las columnas <code class="docutils literal notranslate"><span class="pre">Date</span></code> y <code class="docutils literal notranslate"><span class="pre">Close</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span><span class="o">,</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_binance_1d</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;2018-01-01&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;2025-12-31&quot;</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.binance.com/api/v3/klines&quot;</span>
+    <span class="n">start_ms</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">end_ms</span>   <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end</span><span class="p">,</span>   <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">while</span> <span class="n">start_ms</span> <span class="o">&lt;</span> <span class="n">end_ms</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;symbol&quot;</span><span class="p">:</span> <span class="n">symbol</span><span class="p">,</span>
+            <span class="s2">&quot;interval&quot;</span><span class="p">:</span> <span class="s2">&quot;1d&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;startTime&quot;</span><span class="p">:</span> <span class="n">start_ms</span><span class="p">,</span>
+            <span class="s2">&quot;endTime&quot;</span><span class="p">:</span> <span class="n">end_ms</span><span class="p">,</span>
+            <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+        <span class="p">}</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">all_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">start_ms</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">86400000</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;open_time&quot;</span><span class="p">,</span><span class="s2">&quot;open&quot;</span><span class="p">,</span><span class="s2">&quot;high&quot;</span><span class="p">,</span><span class="s2">&quot;low&quot;</span><span class="p">,</span><span class="s2">&quot;close&quot;</span><span class="p">,</span><span class="s2">&quot;volume&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;close_time&quot;</span><span class="p">,</span><span class="s2">&quot;quote_volume&quot;</span><span class="p">,</span><span class="s2">&quot;trades&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;taker_buy_base&quot;</span><span class="p">,</span><span class="s2">&quot;taker_buy_quote&quot;</span><span class="p">,</span><span class="s2">&quot;ignore&quot;</span>
+    <span class="p">])</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;open_time&quot;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;ms&quot;</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Close&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;close&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span><span class="s2">&quot;Close&quot;</span><span class="p">]]</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;../data&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">get_binance_1d</span><span class="p">(</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">,</span> <span class="s2">&quot;2018-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2025-12-31&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;../data/btc_1d_data_2018_to_2025.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(2921, 2)
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — descarga de datos Binance</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">(2921,</span> <span class="pre">2)</span></code> confirma que la API devolvió 2 921 velas diarias entre 2018-01-01 y 2025-12-31. El número es coherente: ~365 × 8 años ≈ 2 920 días, y BTC cotiza 24/7 (sin huecos de fines de semana). Si viéramos significativamente menos filas sería una bandera roja (caídas de API, ventanas de rate-limit, timezones mal manejados). Que el script paginé con <code class="docutils literal notranslate"><span class="pre">startTime=data[-1][0]</span> <span class="pre">+</span> <span class="pre">86400000</span></code> y <code class="docutils literal notranslate"><span class="pre">time.sleep(0.1)</span></code> entre llamadas evita los dos fallos clásicos de ingesta: duplicación de velas y rate-limit de Binance (1200 req/min). Buena base para el pipeline.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Filas: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">btc</span><span class="p">)</span><span class="si">:</span><span class="s1">,</span><span class="si">}</span><span class="s1">  |  Columnas: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">btc</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">btc</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Filas: 2,921  |  Columnas: [&#39;Date&#39;, &#39;Close&#39;]
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Close</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2018-01-02</td>
+      <td>14,675.110000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2018-01-03</td>
+      <td>14,919.510000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2018-01-04</td>
+      <td>15,059.540000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2018-01-05</td>
+      <td>16,960.390000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2018-01-06</td>
+      <td>17,069.790000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Comentario — carga del CSV</strong></p>
+<p>Dataset en granularidad diaria, 2 921 filas, dos columnas (<code class="docutils literal notranslate"><span class="pre">Date</span></code>, <code class="docutils literal notranslate"><span class="pre">Close</span></code>). La primera fecha es <strong>2018-01-02</strong> y no 01-01 porque Binance devuelve la primera vela completa del rango. No es un bug, es el comportamiento esperado. El precio de apertura del dataset (~14 675 USD) nos sitúa <strong>justo después del pico de diciembre 2017</strong> (ATH ≈ 20 k), es decir arrancamos en un régimen de alta volatilidad post-burbuja — esto condiciona los primeros folds de la CV temporal.</p>
+</section>
+<section id="validacion-de-columnas-y-tipos">
+<h2>2. Validación de columnas y tipos<a class="headerlink" href="#validacion-de-columnas-y-tipos" title="Link to this heading">#</a></h2>
+<p>Comprobamos explícitamente que existan <code class="docutils literal notranslate"><span class="pre">Date</span></code> y <code class="docutils literal notranslate"><span class="pre">Close</span></code>, y forzamos los tipos adecuados:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Date</span></code> → <code class="docutils literal notranslate"><span class="pre">datetime64</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Close</span></code> → <code class="docutils literal notranslate"><span class="pre">float64</span></code>.</p></li>
+</ul>
+<p>Si algún valor no se puede parsear, pandas lo deja como <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, que trataremos en el siguiente paso.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">required</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">}</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">required</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">btc</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">missing</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Faltan columnas requeridas: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s1">&#39;</span>
+
+<span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+<span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">btc</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Date     datetime64[us]
+Close           float64
+dtype: object
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — tipado</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Date:</span> <span class="pre">datetime64[us]</span></code>, <code class="docutils literal notranslate"><span class="pre">Close:</span> <span class="pre">float64</span></code>. El cast explícito a datetime y float es defensivo: evita que un valor no-numérico (string “N/A”, notación científica mal formateada) se cuele como <code class="docutils literal notranslate"><span class="pre">object</span></code> y rompa los cálculos rolling de las siguientes secciones. <code class="docutils literal notranslate"><span class="pre">datetime64[us]</span></code> es el default de pandas moderno; la precisión microsegundo no nos importa con frecuencia diaria, lo único crítico es que el dtype sea datetime nativo para ordenar y extraer <code class="docutils literal notranslate"><span class="pre">.dt.month</span></code>.</p>
+</section>
+<section id="ordenamiento-deduplicacion-y-manejo-de-nulos">
+<h2>3. Ordenamiento, deduplicación y manejo de nulos<a class="headerlink" href="#ordenamiento-deduplicacion-y-manejo-de-nulos" title="Link to this heading">#</a></h2>
+<p>Las series de tiempo requieren orden cronológico estricto. Además, pueden existir filas duplicadas o con fechas repetidas por errores de descarga. Normalizamos:</p>
+<ol class="arabic simple">
+<li><p>Eliminamos filas con <code class="docutils literal notranslate"><span class="pre">NaN</span></code> en <code class="docutils literal notranslate"><span class="pre">Date</span></code> o <code class="docutils literal notranslate"><span class="pre">Close</span></code>.</p></li>
+<li><p>Ordenamos por <code class="docutils literal notranslate"><span class="pre">Date</span></code> ascendente.</p></li>
+<li><p>Eliminamos duplicados (por <code class="docutils literal notranslate"><span class="pre">Date</span></code>) conservando el primero.</p></li>
+<li><p>Reiniciamos el índice.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">antes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">btc</span><span class="p">)</span>
+<span class="n">btc</span> <span class="o">=</span> <span class="p">(</span><span class="n">btc</span>
+       <span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">])</span>
+       <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+       <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+       <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">despues</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">btc</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Filas antes: </span><span class="si">{</span><span class="n">antes</span><span class="si">:</span><span class="s1">,</span><span class="si">}</span><span class="s1">  |  Filas después: </span><span class="si">{</span><span class="n">despues</span><span class="si">:</span><span class="s1">,</span><span class="si">}</span><span class="s1">  |  Eliminadas: </span><span class="si">{</span><span class="n">antes</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">despues</span><span class="si">:</span><span class="s1">,</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Rango de fechas: </span><span class="si">{</span><span class="n">btc</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s1"> → </span><span class="si">{</span><span class="n">btc</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Filas antes: 2,921  |  Filas después: 2,921  |  Eliminadas: 0
+Rango de fechas: 2018-01-02 → 2025-12-31
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Comentario — limpieza temporal</strong></p>
+<p>0 filas eliminadas: ni nulos ni duplicados por fecha. Típicamente los duplicados aparecen cuando se combinan feeds o timezones distintos — acá no ocurre, señal de que Binance ya sirve el dato limpio en UTC. El rango <strong>2018-01-02 → 2025-12-31</strong> nos da 8 años completos, cantidad más que suficiente para 5 folds temporales con train/val/test separados y sin data leakage.</p>
+</section>
+<section id="calculo-de-retornos-logaritmicos-logreturn">
+<h2>4. Cálculo de retornos logarítmicos (<code class="docutils literal notranslate"><span class="pre">LogReturn</span></code>)<a class="headerlink" href="#calculo-de-retornos-logaritmicos-logreturn" title="Link to this heading">#</a></h2>
+<p>Definición:</p>
+<div class="math notranslate nohighlight">
+\[ r_t = \ln\!\left(\frac{P_t}{P_{t-1}}\right) \]</div>
+<p>Usamos retornos log por tres razones: (i) son <strong>aditivos</strong> en el tiempo, (ii) son <strong>simétricos</strong> alrededor de cero, y (iii) se aproximan mejor a una distribución normal que los retornos aritméticos, lo que facilita el cálculo de volatilidad como desviación estándar.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">btc</span><span class="p">[[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="s1">&#39;LogReturn&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Close</th>
+      <th>LogReturn</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2018-01-02</td>
+      <td>14,675.110000</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2018-01-03</td>
+      <td>14,919.510000</td>
+      <td>0.016517</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2018-01-04</td>
+      <td>15,059.540000</td>
+      <td>0.009342</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2018-01-05</td>
+      <td>16,960.390000</td>
+      <td>0.118869</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2018-01-06</td>
+      <td>17,069.790000</td>
+      <td>0.006430</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Comentario — log returns</strong></p>
+<p>La primera fila es <code class="docutils literal notranslate"><span class="pre">NaN</span></code> por construcción (no hay <code class="docutils literal notranslate"><span class="pre">Close_{t-1}</span></code> para t=0). Los retornos observables empiezan en 2018-01-03. Fíjate en el 2018-01-05: <code class="docutils literal notranslate"><span class="pre">+0.118869</span></code> (≈ <strong>+11.9 %</strong> en un solo día). Un retorno de esa magnitud en equities tradicionales sería un evento de 4-5σ; en BTC de 2018 es rutinario. Usamos log-returns (no retornos simples) porque son <strong>aditivos temporalmente</strong> (<code class="docutils literal notranslate"><span class="pre">r_{t→t+n}</span> <span class="pre">=</span> <span class="pre">Σ</span> <span class="pre">r_i</span></code>) y porque su distribución está mejor definida al operar en escalas multiplicativas — crítico cuando el precio varía dos órdenes de magnitud.</p>
+</section>
+<section id="calculo-de-volatilidad-historica-anualizada-volatility">
+<h2>5. Cálculo de volatilidad histórica anualizada (<code class="docutils literal notranslate"><span class="pre">Volatility</span></code>)<a class="headerlink" href="#calculo-de-volatilidad-historica-anualizada-volatility" title="Link to this heading">#</a></h2>
+<p>La volatilidad histórica rolling con ventana de <span class="math notranslate nohighlight">\(n = 30\)</span> días se define como:</p>
+<div class="math notranslate nohighlight">
+\[ \sigma_t = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (r_{t-i} - \bar{r})^2} \cdot \sqrt{365} \]</div>
+<p>El factor <span class="math notranslate nohighlight">\(\sqrt{365}\)</span> la anualiza (los retornos son diarios y BTC cotiza todos los días). Se usa <code class="docutils literal notranslate"><span class="pre">std</span></code> rolling porque la volatilidad <strong>cambia en el tiempo</strong> — una varianza única asumiría homocedasticidad, lo cual es falso para BTC (lo verificaremos en la sección 8.5).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">]</span>
+                     <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">WINDOW_SIZE</span><span class="p">)</span>
+                     <span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ANNUALIZATION</span><span class="p">))</span>
+
+<span class="n">btc</span><span class="p">[[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="s1">&#39;LogReturn&#39;</span><span class="p">,</span> <span class="s1">&#39;Volatility&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">35</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Close</th>
+      <th>LogReturn</th>
+      <th>Volatility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2018-01-02</td>
+      <td>14,675.110000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2018-01-03</td>
+      <td>14,919.510000</td>
+      <td>0.016517</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2018-01-04</td>
+      <td>15,059.540000</td>
+      <td>0.009342</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2018-01-05</td>
+      <td>16,960.390000</td>
+      <td>0.118869</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2018-01-06</td>
+      <td>17,069.790000</td>
+      <td>0.006430</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2018-01-07</td>
+      <td>16,150.030000</td>
+      <td>-0.055388</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>2018-01-08</td>
+      <td>14,902.540000</td>
+      <td>-0.080390</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>2018-01-09</td>
+      <td>14,400.000000</td>
+      <td>-0.034303</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>2018-01-10</td>
+      <td>14,907.090000</td>
+      <td>0.034609</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2018-01-11</td>
+      <td>13,238.780000</td>
+      <td>-0.118687</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2018-01-12</td>
+      <td>13,740.010000</td>
+      <td>0.037162</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2018-01-13</td>
+      <td>14,210.000000</td>
+      <td>0.033634</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>2018-01-14</td>
+      <td>13,474.990000</td>
+      <td>-0.053111</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>2018-01-15</td>
+      <td>13,539.930000</td>
+      <td>0.004808</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>2018-01-16</td>
+      <td>10,900.000000</td>
+      <td>-0.216880</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>2018-01-17</td>
+      <td>10,988.790000</td>
+      <td>0.008113</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>2018-01-18</td>
+      <td>10,961.970000</td>
+      <td>-0.002444</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>2018-01-19</td>
+      <td>11,474.980000</td>
+      <td>0.045737</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>2018-01-20</td>
+      <td>12,799.940000</td>
+      <td>0.109271</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>2018-01-21</td>
+      <td>11,530.000000</td>
+      <td>-0.104488</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>2018-01-22</td>
+      <td>10,760.050000</td>
+      <td>-0.069112</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>2018-01-23</td>
+      <td>10,799.180000</td>
+      <td>0.003630</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>2018-01-24</td>
+      <td>11,349.990000</td>
+      <td>0.049747</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>2018-01-25</td>
+      <td>11,175.270000</td>
+      <td>-0.015514</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>2018-01-26</td>
+      <td>11,089.000000</td>
+      <td>-0.007750</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>2018-01-27</td>
+      <td>11,491.000000</td>
+      <td>0.035610</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>2018-01-28</td>
+      <td>11,879.950000</td>
+      <td>0.033288</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>2018-01-29</td>
+      <td>11,251.000000</td>
+      <td>-0.054395</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>2018-01-30</td>
+      <td>10,237.510000</td>
+      <td>-0.094399</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>2018-01-31</td>
+      <td>10,285.100000</td>
+      <td>0.004638</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>2018-02-01</td>
+      <td>9,224.520000</td>
+      <td>-0.108831</td>
+      <td>1.348263</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>2018-02-02</td>
+      <td>8,873.030000</td>
+      <td>-0.038849</td>
+      <td>1.345556</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>2018-02-03</td>
+      <td>9,199.960000</td>
+      <td>0.036183</td>
+      <td>1.355471</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>2018-02-04</td>
+      <td>8,184.810000</td>
+      <td>-0.116919</td>
+      <td>1.307933</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>2018-02-05</td>
+      <td>6,939.990000</td>
+      <td>-0.164980</td>
+      <td>1.391268</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Comentario — volatilidad histórica anualizada</strong></p>
+<p>Observa que <code class="docutils literal notranslate"><span class="pre">Volatility</span></code> es <code class="docutils literal notranslate"><span class="pre">NaN</span></code> en las primeras 29 filas: la ventana rolling de 30 días necesita 30 observaciones antes de emitir el primer valor, que aparece recién en la fila 30 (2018-02-01). Ese primer valor es <strong>1.35</strong> — volatilidad anualizada de 135 %. No es un bug: refleja el crash de enero 2018 donde BTC pasó de ~17 k a ~6.9 k en 5 semanas. Por construcción, perderemos 30 días del inicio de la serie; con 2 921 filas originales quedarán 2 891 útiles, lo cual sigue siendo abundante para el modelado.</p>
+</section>
+<section id="limpieza-final-tras-calculos-rolling">
+<h2>6. Limpieza final tras cálculos rolling<a class="headerlink" href="#limpieza-final-tras-calculos-rolling" title="Link to this heading">#</a></h2>
+<p>Los primeros <code class="docutils literal notranslate"><span class="pre">WINDOW_SIZE</span></code> valores de <code class="docutils literal notranslate"><span class="pre">Volatility</span></code> son <code class="docutils literal notranslate"><span class="pre">NaN</span></code> (la ventana rolling todavía no tiene suficientes observaciones) y la primera fila de <code class="docutils literal notranslate"><span class="pre">LogReturn</span></code> también (no hay <code class="docutils literal notranslate"><span class="pre">P_{t-1}</span></code>). Las descartamos para dejar el dataset listo para modelado.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btc</span> <span class="o">=</span> <span class="n">btc</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">,</span> <span class="s1">&#39;Volatility&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Filas finales: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">btc</span><span class="p">)</span><span class="si">:</span><span class="s1">,</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">btc</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Filas finales: 2,891
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Close</th>
+      <th>LogReturn</th>
+      <th>Volatility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2018-02-01</td>
+      <td>9,224.520000</td>
+      <td>-0.108831</td>
+      <td>1.348263</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2018-02-02</td>
+      <td>8,873.030000</td>
+      <td>-0.038849</td>
+      <td>1.345556</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2018-02-03</td>
+      <td>9,199.960000</td>
+      <td>0.036183</td>
+      <td>1.355471</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2018-02-04</td>
+      <td>8,184.810000</td>
+      <td>-0.116919</td>
+      <td>1.307933</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2018-02-05</td>
+      <td>6,939.990000</td>
+      <td>-0.164980</td>
+      <td>1.391268</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Comentario — serie limpia</strong></p>
+<p><strong>2 891 filas útiles</strong> tras el drop de los 30 días iniciales. Con horizonte de 7 pasos y lag máximo de 28, cada ventana de modelado consume 35 muestras (28 input + 7 output). Nos sobra margen para 5 folds temporales (<code class="docutils literal notranslate"><span class="pre">split_train_val_test_groupKFold</span></code>) que es lo que usaremos en nb2. Piso mínimo aproximado: 5 folds × (train + val + test) ≈ 35 × 15 = 525 ventanas, muy por debajo de lo disponible.</p>
+</section>
+<section id="estadisticas-descriptivas">
+<h2>7. Estadísticas descriptivas<a class="headerlink" href="#estadisticas-descriptivas" title="Link to this heading">#</a></h2>
+<p>Resumen numérico de <code class="docutils literal notranslate"><span class="pre">Close</span></code>, <code class="docutils literal notranslate"><span class="pre">LogReturn</span></code> y <code class="docutils literal notranslate"><span class="pre">Volatility</span></code>. Añadimos skewness y kurtosis de los retornos, porque BTC típicamente presenta <strong>leptocurtosis</strong> (colas pesadas: retornos extremos más frecuentes que en una normal).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">desc</span> <span class="o">=</span> <span class="n">btc</span><span class="p">[[</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="s1">&#39;LogReturn&#39;</span><span class="p">,</span> <span class="s1">&#39;Volatility&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span class="n">desc</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;skew&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">btc</span><span class="p">[[</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="s1">&#39;LogReturn&#39;</span><span class="p">,</span> <span class="s1">&#39;Volatility&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">skew</span><span class="p">()</span>
+<span class="n">desc</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;kurtosis&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">btc</span><span class="p">[[</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="s1">&#39;LogReturn&#39;</span><span class="p">,</span> <span class="s1">&#39;Volatility&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">()</span>
+<span class="n">desc</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Close</th>
+      <th>LogReturn</th>
+      <th>Volatility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>2,891.000000</td>
+      <td>2,891.000000</td>
+      <td>2,891.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>37,518.044140</td>
+      <td>0.000741</td>
+      <td>0.604292</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>32,289.580657</td>
+      <td>0.034290</td>
+      <td>0.265974</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>3,211.720000</td>
+      <td>-0.502607</td>
+      <td>0.167561</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>9,391.675000</td>
+      <td>-0.013502</td>
+      <td>0.430300</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>27,694.400000</td>
+      <td>0.000505</td>
+      <td>0.558514</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>57,635.730000</td>
+      <td>0.015336</td>
+      <td>0.710767</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>124,658.540000</td>
+      <td>0.178449</td>
+      <td>2.117772</td>
+    </tr>
+    <tr>
+      <th>skew</th>
+      <td>0.972157</td>
+      <td>-1.131133</td>
+      <td>2.097876</td>
+    </tr>
+    <tr>
+      <th>kurtosis</th>
+      <td>-0.113980</td>
+      <td>18.680227</td>
+      <td>7.933303</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Comentario — estadísticas descriptivas (clave)</strong></p>
+<p>Tres lecturas que condicionan todo el modelado:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">Close</span></code></strong>: rango 3 211 → 124 658 USD (×38), skew +0.97. El precio NO es estacionario — por eso NO es el target. Modelar precio directamente es el error clásico de los primeros intentos en cripto.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">LogReturn</span></code></strong>: media ≈ 0.0007 (≈ 27 % anual, coherente con BTC alcista en 8 años). Pero lo decisivo es la <strong>kurtosis = 18.68</strong> (gaussiana tiene 0) y el <strong>skew = −1.13</strong>. Los retornos tienen <strong>colas ultra-gruesas y asimétricas hacia abajo</strong> — los días malos son peores que los buenos en la misma magnitud. Cualquier modelo que asuma errores normales (OLS, regresión lineal con test t) subestimaría sistemáticamente el riesgo.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">Volatility</span></code></strong>: rango 0.17 → 2.12 (17 % → 212 % anualizada), skew +2.10, kurtosis +7.93. Distribución con cola derecha larga: la mayoría de días viven en vol moderada (~0.5-0.7) pero hay episodios cortos de pánico donde la vol se dispara.</p></li>
+</ul>
+</section>
+<section id="visualizaciones">
+<h2>8. Visualizaciones<a class="headerlink" href="#visualizaciones" title="Link to this heading">#</a></h2>
+<p>serie de precios, serie de retornos, histograma de retornos, ACF de retornos y ACF de retornos al cuadrado</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_acf</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">max_lag</span><span class="o">=</span><span class="n">ACF_LAGS</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ACF muestral basada en pandas.autocorr (Pearson lag-k).&quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">autocorr</span><span class="p">(</span><span class="n">lag</span><span class="o">=</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_lag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_acf_bars</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">max_lag</span><span class="o">=</span><span class="n">ACF_LAGS</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">acf_vals</span> <span class="o">=</span> <span class="n">compute_acf</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">max_lag</span><span class="o">=</span><span class="n">max_lag</span><span class="p">)</span>
+    <span class="n">ci</span> <span class="o">=</span> <span class="mf">1.96</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>   <span class="c1"># banda aproximada de 95% bajo H0 iid</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">max_lag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">acf_vals</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;±</span><span class="si">{</span><span class="n">ci</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> (95% CI)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="o">-</span><span class="n">ci</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Lag&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Autocorrelación&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="serie-temporal-de-precios">
+<h3>8.1 Serie temporal de precios<a class="headerlink" href="#serie-temporal-de-precios" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;BTC — Precio de cierre diario (2018–2025)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Fecha&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Precio (USD)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/110792fd133b403fe16f907a8873ab14ace5e28929055982b0f456d8cb30ab00.png" src="../_images/110792fd133b403fe16f907a8873ab14ace5e28929055982b0f456d8cb30ab00.png" />
+</div>
+</div>
+<p><strong>Comentario — serie de precios 2018-2025</strong></p>
+<p>Tres regímenes claros visibles a ojo:</p>
+<ol class="arabic simple">
+<li><p><strong>2018-2020</strong> — fase de consolidación y bear (3 k – 10 k). Cola del crash post-2017.</p></li>
+<li><p><strong>2021-2022</strong> — rally a ~69 k, colapso a ~16 k por Terra/Luna (mayo) y FTX (noviembre). Máxima volatilidad de la muestra.</p></li>
+<li><p><strong>2023-2025</strong> — nuevo ciclo alcista, ATH ≥ 124 k.</p></li>
+</ol>
+<p>La serie <strong>no es estacionaria en niveles</strong> (ni media ni varianza estables). Eso justifica dos decisiones del pipeline: (1) modelar retornos / volatilidad (procesos sí estacionarios en su mayoría), y (2) usar <strong>validación cruzada temporal</strong> — si hiciéramos k-fold random, folds de 2025 entrenarían con información del futuro vs folds de 2018, generando leakage.</p>
+</section>
+<section id="serie-temporal-de-retornos-diarios">
+<h3>8.2 Serie temporal de retornos diarios<a class="headerlink" href="#serie-temporal-de-retornos-diarios" title="Link to this heading">#</a></h3>
+<p>Se esperan <strong>clústers de volatilidad</strong>: períodos donde los retornos son grandes (en valor absoluto) agrupados entre sí, seguidos por períodos más tranquilos. Este patrón es precisamente lo que el MLP de volatilidad va a intentar aprender.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;BTC — Retornos logarítmicos diarios&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Fecha&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Log return&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/36a5d29933c9d0db925f2decd16180979ed4b2acd757c23dc59fafd4bdc68fcf.png" src="../_images/36a5d29933c9d0db925f2decd16180979ed4b2acd757c23dc59fafd4bdc68fcf.png" />
+</div>
+</div>
+<p><strong>Comentario — retornos diarios</strong></p>
+<p>Firma visual clásica de un activo financiero líquido:</p>
+<ul class="simple">
+<li><p><strong>Media centrada en 0</strong> (línea roja) — sin deriva visible.</p></li>
+<li><p><strong>Heterocedasticidad evidente</strong>: bandas densas concentradas alrededor de 2018-Q1, 2020-Mar (COVID: −50 % en un día), 2021-May, 2022-May/Nov (Luna/FTX), y tramos relativamente planos en 2023-2024.</p></li>
+</ul>
+<p>Ese fenómeno de <strong>clustering de volatilidad</strong> es exactamente lo que motiva el proyecto: la varianza condicional en t+1 depende de la historia reciente de magnitudes, no del signo. Modelos que asumen σ constante (homocedasticidad) no pueden replicar este patrón. Familias ARCH/GARCH lo resuelven paramétricamente; nuestro MLP multisalida lo aprende de los lags.</p>
+</section>
+<section id="histograma-de-retornos">
+<h3>8.3 Histograma de retornos<a class="headerlink" href="#histograma-de-retornos" title="Link to this heading">#</a></h3>
+<p>Comparamos el histograma de retornos con una normal de misma media y varianza. Si las colas del histograma sobrepasan a la normal, hay <strong>leptocurtosis</strong> (un hecho estilizado clásico de los mercados financieros).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="c1"># Curva normal de referencia (misma media y sigma)</span>
+<span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">400</span><span class="p">)</span>
+<span class="n">pdf</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">xx</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;N(</span><span class="si">{</span><span class="n">mu</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">sigma</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">²)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Distribución de retornos log diarios&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Log return&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Densidad&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f320228860b01c236a4747ca8154148c90b9a6ade29466b9144dd9628511090b.png" src="../_images/f320228860b01c236a4747ca8154148c90b9a6ade29466b9144dd9628511090b.png" />
+</div>
+</div>
+<p><strong>Comentario — histograma de retornos vs normal</strong></p>
+<p>El histograma azul tiene dos diferencias cualitativas con la curva roja (gaussiana del mismo μ, σ):</p>
+<ol class="arabic simple">
+<li><p><strong>Pico central mucho más alto</strong> — muchos más días “tranquilos” de los que predeciría una normal.</p></li>
+<li><p><strong>Colas mucho más gruesas</strong> — eventos extremos |r| &gt; 3σ ocurren con una frecuencia que la normal asigna probabilidad casi nula.</p></li>
+</ol>
+<p>Esta es la <strong>leptocurtosis</strong> (kurtosis 18.68) visualizada. Implicación práctica para el MLP: la loss MSE penaliza cuadráticamente los errores, de modo que los gradientes están dominados por los pocos días de cola. Por eso en nb2 usamos <code class="docutils literal notranslate"><span class="pre">StandardScaler</span></code> en el target (evita que picos desbalancen la escala del loss) y reportamos MAE en paralelo (menos sensible a outliers individuales).</p>
+</section>
+<section id="acf-de-los-retornos">
+<h3>8.4 ACF de los retornos<a class="headerlink" href="#acf-de-los-retornos" title="Link to this heading">#</a></h3>
+<p>Se espera que la ACF esté muy cercana a cero en todos los lags: en mercados eficientes en la media, los retornos son casi ruido blanco de primer orden.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_acf_bars</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;ACF — Retornos log&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/247dc1e1aafe741a45909652ec645e5ce69a9de3d3f711233a460d27cc417dfe.png" src="../_images/247dc1e1aafe741a45909652ec645e5ce69a9de3d3f711233a460d27cc417dfe.png" />
+</div>
+</div>
+<p><strong>Comentario — ACF de retornos (¡CRÍTICO!)</strong></p>
+<p>Casi todas las barras caen <strong>dentro de la banda roja de 95 %</strong> (±1.96/√N ≈ ±0.037). Numéricamente: lag1 = −0.068 (marginal), lag2 = +0.051 (borderline), lag5 ≈ 0. <strong>No hay estructura lineal persistente en los retornos.</strong></p>
+<p>Consecuencia dura: <strong>el retorno de mañana NO es predecible a partir de sus lags</strong> con un modelo lineal. Consistente con la forma débil del EMH. Si intentáramos predecir retorno (dirección de precio) con un MLP sobre estos lags, el modelo aprendería a predecir la media (= 0) y nada más, y competir con un <code class="docutils literal notranslate"><span class="pre">predict</span> <span class="pre">0</span> <span class="pre">siempre</span></code> sería duro.</p>
+<p><strong>Por eso el target del proyecto NO es retorno — es volatilidad.</strong> El siguiente gráfico demuestra por qué sí tiene sentido.</p>
+</section>
+<section id="acf-de-los-retornos-al-cuadrado-heterocedasticidad">
+<h3>8.5 ACF de los retornos al cuadrado — heterocedasticidad<a class="headerlink" href="#acf-de-los-retornos-al-cuadrado-heterocedasticidad" title="Link to this heading">#</a></h3>
+<p>Este es el gráfico clave del EDA. Si los retornos al cuadrado (proxy de la varianza instantánea) presentan <strong>autocorrelaciones positivas y persistentes</strong>, eso evidencia <strong>heterocedasticidad condicional</strong>: la volatilidad de hoy depende de la de los días previos. Esa es la justificación empírica del proyecto — predecir volatilidad tiene sentido porque <strong>la volatilidad es predecible</strong>, aunque los retornos no lo sean.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_acf_bars</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;LogReturn&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;ACF — Retornos log al cuadrado (proxy de varianza)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a953567cc52f30a8c5074cb46949209157fe60c93692c2964086f131273cd403.png" src="../_images/a953567cc52f30a8c5074cb46949209157fe60c93692c2964086f131273cd403.png" />
+</div>
+</div>
+<p><strong>Comentario — ACF de retornos² (LA JUSTIFICACIÓN DEL PROYECTO)</strong></p>
+<p>Aquí cambia todo: lag1 = <strong>+0.092</strong> (bien fuera de la banda), y las barras se mantienen positivas durante muchos lags con decaimiento lento (hasta lag 30-40 son visibles).</p>
+<p>Los <strong>retornos al cuadrado</strong> (proxy de la varianza instantánea) tienen <strong>memoria significativa</strong>: la magnitud absoluta del retorno de hoy tiene poder predictivo sobre la magnitud de los retornos futuros. En otras palabras:</p>
+<ul class="simple">
+<li><p><strong>Signo del retorno</strong> → no predecible (gráfico anterior).</p></li>
+<li><p><strong>Magnitud del retorno / volatilidad</strong> → sí predecible.</p></li>
+</ul>
+<p>Este fenómeno es el núcleo teórico de la familia ARCH/GARCH (Engle 1982, Bollerslev 1986) y es la razón por la que el target de nb2 es la volatilidad de 30 días anualizada, no el precio ni el retorno. Si esta ACF fuera plana, el proyecto no sería viable con feed-forward MLPs.</p>
+</section>
+<section id="serie-temporal-de-volatilidad-historica-anualizada">
+<h3>8.6 Serie Temporal de Volatilidad Histórica (Anualizada)<a class="headerlink" href="#serie-temporal-de-volatilidad-historica-anualizada" title="Link to this heading">#</a></h3>
+<p>La volatilidad es nuestra variable objetivo. Visualizar su evolución a lo largo del tiempo permite observar los picos y evaluar cómo convergen con eventos del mercado.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Volatilidad Histórica&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;BTC — Evolución de la Volatilidad Histórica (Anualizada)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Fecha&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Sigma (Volatilidad)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[[</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/e9bae4d0f3eb556619e745c9cd9bd49966e0a4eaf44908455f37cb3a4adbeeae.png" src="../_images/e9bae4d0f3eb556619e745c9cd9bd49966e0a4eaf44908455f37cb3a4adbeeae.png" />
+</div>
+</div>
+<p><strong>Comentario — serie de volatilidad 2018-2025</strong></p>
+<p>Patrón de clustering clarísimo. Picos identificables:</p>
+<ul class="simple">
+<li><p><strong>2018-02</strong> (~1.35): resaca post-ATH 2017.</p></li>
+<li><p><strong>2020-03</strong> (~1.7-2.0): crash COVID — el pico máximo de la muestra, coherente con el min histórico del S&amp;P ese mismo mes.</p></li>
+<li><p><strong>2022-05, 2022-11</strong> (~1.0+): colapsos de Terra/Luna y FTX respectivamente.</p></li>
+<li><p><strong>2023-2025</strong>: régimen sostenidamente más tranquilo (vol ≤ ~1.0), consistente con la narrativa de “institucionalización” (ETFs spot aprobados en Ene-2024, mayor participación de custodians regulados).</p></li>
+</ul>
+<p><strong>Señal de alerta para el modelo</strong>: existe una <strong>tendencia secular</strong> decreciente en la vol promedio. Folds de CV temporal de 2018-2020 entrenan con estadísticas diferentes a 2023-2025. El CV temporal es imprescindible — si usáramos shuffle aleatorio, el modelo vería el régimen “tranquilo” de 2024 durante entrenamiento y generalizaría mal al “salvaje” de 2020. Confirma la decisión de nb2.</p>
+</section>
+<section id="distribucion-de-la-volatilidad-historica">
+<h3>8.7 Distribución de la Volatilidad Histórica<a class="headerlink" href="#distribucion-de-la-volatilidad-historica" title="Link to this heading">#</a></h3>
+<p>Un histograma nos ayuda a entender los rangos donde normalmente reside la volatilidad. Veremos si es asimétrica o si tiene colas derechas grandes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">patches</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Media: </span><span class="si">{</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dotted&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Mediana: </span><span class="si">{</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;BTC — Distribución de la Volatilidad Histórica&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Volatilidad Anualizada&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frecuencia Promedio&#39;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[[</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ddbc1e4687b31226af528564d26cf91de9908a363dfec32ed2de169053cb99fc.png" src="../_images/ddbc1e4687b31226af528564d26cf91de9908a363dfec32ed2de169053cb99fc.png" />
+</div>
+</div>
+<p><strong>Comentario — distribución de la volatilidad</strong></p>
+<p>Distribución <strong>asimétrica con cola derecha larga</strong> (skew = +2.10). Línea roja (mean ≈ 0.60) a la derecha de la negra (median ≈ 0.56) — confirma la asimetría positiva. El grueso de los días vive en vol 0.3-0.7; un 2-5 % de los días cruza 1.5. Implicaciones:</p>
+<ul class="simple">
+<li><p><strong>En evaluación</strong>: MAE es más honesto que MSE como métrica “típica”, porque MSE está dominado por los pocos días de cola extrema. Reportamos ambos en nb3.</p></li>
+<li><p><strong>Sanity check del modelo</strong>: si el MLP predice siempre algo cerca de 0.6 (la media), sus métricas en días tranquilos serán decentes pero colapsarán en los picos. Por eso el lag máximo (28 días) tiene que ser suficiente para “ver venir” un episodio de pánico — 28 días cubren la construcción del clúster típico.</p></li>
+<li><p><strong>No es lognormal pura</strong>: una lognormal tendría skew y kurt específicos; acá tenemos kurt 7.93 que es algo entre lognormal y mezcla de regímenes. No necesitamos modelarla paramétricamente, el MLP aprende la forma condicional.</p></li>
+</ul>
+</section>
+<section id="estacionalidad-volatilidad-promedio-por-mes">
+<h3>8.8 Estacionalidad: Volatilidad Promedio por Mes<a class="headerlink" href="#estacionalidad-volatilidad-promedio-por-mes" title="Link to this heading">#</a></h3>
+<p>¿Existe algún mes donde históricamente Bitcoin sea más volátil? Agrupamos la serie históricamente observando los promedios mensuales.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">btc_clean</span> <span class="o">=</span> <span class="n">btc</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">btc_clean</span><span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">btc_clean</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span>
+<span class="n">vol_by_month</span> <span class="o">=</span> <span class="n">btc_clean</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Month&#39;</span><span class="p">)[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">months_str</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Ene&#39;</span><span class="p">,</span> <span class="s1">&#39;Feb&#39;</span><span class="p">,</span> <span class="s1">&#39;Mar&#39;</span><span class="p">,</span> <span class="s1">&#39;Abr&#39;</span><span class="p">,</span> <span class="s1">&#39;May&#39;</span><span class="p">,</span> <span class="s1">&#39;Jun&#39;</span><span class="p">,</span> <span class="s1">&#39;Jul&#39;</span><span class="p">,</span> <span class="s1">&#39;Ago&#39;</span><span class="p">,</span> <span class="s1">&#39;Sep&#39;</span><span class="p">,</span> <span class="s1">&#39;Oct&#39;</span><span class="p">,</span> <span class="s1">&#39;Nov&#39;</span><span class="p">,</span> <span class="s1">&#39;Dic&#39;</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">bars</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">months_str</span><span class="p">,</span> <span class="n">vol_by_month</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;BTC — Promedio de Volatilidad Histórica por Mes (2018-2025)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Mes&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Volatilidad Promedio&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[[</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Añadimos los valores encima de cada barra para mayor claridad</span>
+<span class="k">for</span> <span class="n">bar</span> <span class="ow">in</span> <span class="n">bars</span><span class="p">:</span>
+    <span class="n">yval</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">bar</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">yval</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">yval</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b0ffe40bc4e4c2c69e7c12a7797d10dfad888696506058ad89b58f5271c82046.png" src="../_images/b0ffe40bc4e4c2c69e7c12a7797d10dfad888696506058ad89b58f5271c82046.png" />
+</div>
+</div>
+<p><strong>Comentario — volatilidad promedio por mes (estacionalidad)</strong></p>
+<p>Hay un patrón estacional visible pero modesto:</p>
+<ul class="simple">
+<li><p><strong>Marzo (0.82)</strong> es el mes más volátil — dominado por COVID-2020 y el crash 2018.</p></li>
+<li><p><strong>Octubre (0.45)</strong> el más tranquilo — consistente con la tradición de “Uptober” alcista y de baja vol en cripto.</p></li>
+<li><p>Spread max-min = 0.37 (≈ 61 % de la media anual).</p></li>
+</ul>
+<p><strong>Caveat honesto</strong>: n = 8 años por mes, así que <strong>un solo evento gordo distorsiona toda la columna</strong> (COVID-Mar-2020 eleva mucho el promedio de marzo). No es señal estacional pura, es ruido de muestra mezclado con estacionalidad.</p>
+<p><strong>Decisión de modelado</strong>: NO se agrega feature <code class="docutils literal notranslate"><span class="pre">mes</span></code> al input del MLP. Los lags de volatilidad ya contienen toda la información local — el mes solo añadiría ruido estacional con n chico. Si quisiéramos explotar estacionalidad, sería en una iteración futura con más años de historia o features de calendario explícitas (eg. días al próximo halving).</p>
+</section>
+<section id="dinamica-de-precio-vs-volatilidad-eje-dual">
+<h3>8.9 Dinámica de Precio vs Volatilidad (Eje Dual)<a class="headerlink" href="#dinamica-de-precio-vs-volatilidad-eje-dual" title="Link to this heading">#</a></h3>
+<p>Finalmente, graficamos el Precio de cierre en un eje izquierdo y la Volatilidad en el eje derecho para analizar el “efecto apalancamiento” (suelen ocurrir grandes aumentos de volatilidad cuando hay caídas bruscas de precios o rallies parabólicos).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Eje Izquierdo - Precio</span>
+<span class="n">color1</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color1</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Precio (USD)&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color1</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="n">color1</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Fecha&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="c1"># Eje Derecho - Volatilidad</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+<span class="n">color2</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span> <span class="c1"># Utilizamos el color secundario de la paleta</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">btc</span><span class="p">[</span><span class="s1">&#39;Volatility&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color2</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Volatilidad Anualizada&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color2</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="n">color2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;BTC — Dinámica entre el Precio y Volatilidad (Eje Dual)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c4b5dcace2d288bb4cefec5e6100395fca40980d4e2332eef568d708c477c3f9.png" src="../_images/c4b5dcace2d288bb4cefec5e6100395fca40980d4e2332eef568d708c477c3f9.png" />
+</div>
+</div>
+<p><strong>Comentario — dinámica precio vs volatilidad (eje dual)</strong></p>
+<p>El gráfico expone el <strong>efecto leverage</strong> clásico: los picos de vol coinciden con los <strong>drawdowns fuertes</strong> (2018-Q1, 2020-03, 2022), NO con los máximos de precio. Tres observaciones operativas:</p>
+<ol class="arabic simple">
+<li><p>El rally a ATH (124 k) en 2024-2025 transcurre con vol moderadamente baja — mercado “aburrido alcista”, característico de tendencias institucionales sostenidas.</p></li>
+<li><p>Los <strong>picos máximos</strong> de vol son en capitulación (2020-03, 2022-11), no en euforia.</p></li>
+<li><p>Hay un <strong>efecto tardío</strong>: la vol a veces sigue elevada semanas después de que el precio estabilizó (eg. mediados de 2020, tras el COVID low). Esto implica que el modelo puede seguir usando información de la caída durante la recuperación.</p></li>
+</ol>
+<p><strong>La vol funciona como early-warning de stress del mercado, no como indicador de dirección.</strong> Esa es una propiedad valiosa del output de nuestra API: predecir vol alta 7 días adelante es una señal accionable para position-sizing / risk management, aunque no diga si el precio sube o baja.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">BTC Volatility MLP — Proyecto Integrador 11.15</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="2_model_training.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Notebook 2 — Entrenamiento del MLP</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carga-del-dataset">1. Carga del dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validacion-de-columnas-y-tipos">2. Validación de columnas y tipos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordenamiento-deduplicacion-y-manejo-de-nulos">3. Ordenamiento, deduplicación y manejo de nulos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculo-de-retornos-logaritmicos-logreturn">4. Cálculo de retornos logarítmicos (<code class="docutils literal notranslate"><span class="pre">LogReturn</span></code>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculo-de-volatilidad-historica-anualizada-volatility">5. Cálculo de volatilidad histórica anualizada (<code class="docutils literal notranslate"><span class="pre">Volatility</span></code>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limpieza-final-tras-calculos-rolling">6. Limpieza final tras cálculos rolling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estadisticas-descriptivas">7. Estadísticas descriptivas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizaciones">8. Visualizaciones</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#serie-temporal-de-precios">8.1 Serie temporal de precios</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#serie-temporal-de-retornos-diarios">8.2 Serie temporal de retornos diarios</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#histograma-de-retornos">8.3 Histograma de retornos</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#acf-de-los-retornos">8.4 ACF de los retornos</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#acf-de-los-retornos-al-cuadrado-heterocedasticidad">8.5 ACF de los retornos al cuadrado — heterocedasticidad</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#serie-temporal-de-volatilidad-historica-anualizada">8.6 Serie Temporal de Volatilidad Histórica (Anualizada)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-de-la-volatilidad-historica">8.7 Distribución de la Volatilidad Histórica</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estacionalidad-volatilidad-promedio-por-mes">8.8 Estacionalidad: Volatilidad Promedio por Mes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dinamica-de-precio-vs-volatilidad-eje-dual">8.9 Dinámica de Precio vs Volatilidad (Eje Dual)</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Juan Andrés Ramos Cardona
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
